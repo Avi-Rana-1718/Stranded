@@ -4,8 +4,6 @@
 
 #include "main/game.h"
 
-// Components
-
 int main()
 {
 

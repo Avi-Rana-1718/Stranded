@@ -1,10 +1,12 @@
 class CShape
 {
 public:
+    int radius;
     sf::CircleShape circle;
+
     CShape(float r, float edges) : circle(r, edges)
     {
-        circle.setFillColor(sf::Color::Red);
+        radius = r;
     }
 };
 
@@ -31,15 +33,5 @@ public:
         speedX = sx;
         speedY = sy;
         angle = a;
-    }
-};
-
-class CInput
-{
-public:
-    int id;
-    CInput()
-    {
-        id = 0;
     }
 };

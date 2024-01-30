@@ -8,18 +8,21 @@ public:
 
     CShape *cshape = NULL;
     CTransform *ctransfrom = NULL;
-    CInput *cinput = NULL;
+    
+    bool controllable = false;
 
-    Entity(std::string t, int id, float radius, float edges, float px, float py, float sx, float sy, bool controllable)
+    Entity(std::string t, int id, float radius, float edges, float px, float py, float sx, float sy, bool controll)
     {
         tag = t;
         e_id = id;
         cshape = new CShape(radius, edges);
         ctransfrom = new CTransform(px, py, sx, sy, 0);
-        if (controllable == true)
-        {
-            cinput = new CInput;
-        }
+        controllable=controll;
+    }
+
+    ~ Entity() {
+        delete cshape;
+        delete ctransfrom;
     }
 };
 
@@ -29,9 +32,9 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, float px, float py, float sx, float sy, bool controllable = false)
+    Entity *addEntities(std::string tag, float radius, float edges, float px, float py, float sx, float sy, bool controllable = false)
     {
-        Entity *ptr = new Entity(tag, m_totalEntities++, 10.f, 10, px, py, sx, sy, controllable);
+        Entity *ptr = new Entity(tag, m_totalEntities++, radius, edges, px, py, sx, sy, controllable);
         m_entities.push_back(ptr);
         return ptr;
     }
