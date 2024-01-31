@@ -4,9 +4,14 @@ public:
     int radius;
     sf::CircleShape circle;
 
-    CShape(float r, float edges) : circle(r, edges)
+    CShape(float r, float edges, sf::Color color, sf::Color outline_color, int outline_thickness) : circle(r, edges)
     {
+
         radius = r;
+    circle.setOrigin(radius, radius);
+        circle.setFillColor(color);
+        circle.setOutlineColor(outline_color);
+        circle.setOutlineThickness(outline_thickness);
     }
 };
 

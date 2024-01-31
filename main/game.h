@@ -1,5 +1,5 @@
 #include "entityManager.h"
-
+#include<math.h>
 // Constants
 
 #define WINDOW_WIDTH 1800
@@ -21,6 +21,7 @@ class Game
     void SDraw(const std::vector<Entity *> &entities);
     void SMove(const std::vector<Entity *> &entities);
     void SInput(Entity *player); // player input
+    bool SCollision(Entity* entity);
     void SUserInterface();
 
     // Helper functions declarations
@@ -28,7 +29,6 @@ class Game
     Entity *spawnPlayer();
 
     // todo
-    void SCollision(); // collision system
 
 public:
     Entity *player;
@@ -45,12 +45,15 @@ public:
         {
             std::cout << "Font not found!";
         }
+
     }
 
     void run()
     {
         // declarations
-        entities.addEntities("Enemy", 10, 3, 0, 0, 1, 2);
+        entities.addEntities("Enemy", 40, 3, 400, 100, 1, 2, sf::Color(0, 255, 128));
+        entities.addEntities("Enemy", 45, 5, 300, 200, 2, 2, sf::Color(255,102,178));
+        entities.addEntities("Enemy", 30, 4, 600, 400, 5, 3, sf::Color(102,178,255));
 
         SUserInterface();
 
@@ -68,7 +71,7 @@ public:
 
             SDraw(entities.getEntities());
             SMove(entities.getEntities());
-            SInput(player);
+                        SInput(player);
 
             frames++;
         }
@@ -84,6 +87,7 @@ void Game::SDraw(const std::vector<Entity *> &entities)
     {
         if (entity->cshape != NULL)
         {
+                        entity->cshape->circle.rotate(1.f);
             window.draw(entity->cshape->circle);
         }
     }
@@ -102,13 +106,14 @@ void Game::SMove(const std::vector<Entity *> &entities)
 
     for (auto entity : entities)
     {
-        if ((entity->ctransfrom != NULL) && (entity->controllable == false))
+        SCollision(entity);
+        if ((entity->ctransform != NULL) && (entity->controllable == false))
         {
-            entity->cshape->circle.setPosition(entity->ctransfrom->posX += entity->ctransfrom->speedX, entity->ctransfrom->posY += entity->ctransfrom->speedY);
+            entity->cshape->circle.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
         }
-        else if (entity->ctransfrom != NULL)
+        else if (entity->ctransform != NULL)
         {
-            entity->cshape->circle.setPosition(entity->ctransfrom->posX, entity->ctransfrom->posY);
+            entity->cshape->circle.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
     }
 }
@@ -117,20 +122,39 @@ void Game::SInput(Entity *player)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        player->ctransfrom->posX -= player->ctransfrom->speedX;
+        player->ctransform->posX -= player->ctransform->speedX;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        player->ctransfrom->posX += player->ctransfrom->speedX;
+        player->ctransform->posX += player->ctransform->speedX;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        player->ctransfrom->posY -= player->ctransfrom->speedY;
+        player->ctransform->posY -= player->ctransform->speedY;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        player->ctransfrom->posY += player->ctransfrom->speedY;
+        player->ctransform->posY += player->ctransform->speedY;
     }
+}
+
+bool Game::SCollision(Entity *entity)
+{
+        if ((entity->ctransform != NULL) && (entity->controllable != true))
+        {
+            if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius> WINDOW_WIDTH))
+            {
+                entity->ctransform->speedX *= -1;
+                return true;
+            }
+            if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius> WINDOW_HEIGHT))
+            {
+                entity->ctransform->speedY *= -1;
+                return true;
+            }
+        }
+
+        return false;
 }
 
 void Game::SUserInterface()
@@ -150,5 +174,5 @@ void Game::SUserInterface()
 
 Entity *Game::spawnPlayer()
 {
-    return entities.addEntities("Player", 50, 6, 100, 110, 10, 10, true);
+    return entities.addEntities("Player", 50, 6, 100, 110, 10, 10, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
 }

@@ -7,22 +7,22 @@ public:
     int e_id;
 
     CShape *cshape = NULL;
-    CTransform *ctransfrom = NULL;
+    CTransform *ctransform = NULL;
     
     bool controllable = false;
 
-    Entity(std::string t, int id, float radius, float edges, float px, float py, float sx, float sy, bool controll)
+    Entity(std::string t, int id, float radius, float edges, float px, float py, float sx, float sy, sf::Color color, sf::Color outline_color, int outline_thickness, bool controll)
     {
         tag = t;
         e_id = id;
-        cshape = new CShape(radius, edges);
-        ctransfrom = new CTransform(px, py, sx, sy, 0);
+        cshape = new CShape(radius, edges, color, outline_color, outline_thickness);
+        ctransform = new CTransform(px, py, sx, sy, 0);
         controllable=controll;
     }
 
     ~ Entity() {
         delete cshape;
-        delete ctransfrom;
+        delete ctransform;
     }
 };
 
@@ -32,12 +32,12 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, float radius, float edges, float px, float py, float sx, float sy, bool controllable = false)
+    Entity *addEntities(std::string tag, float radius, float edges, float px, float py, float sx, float sy, sf::Color color, sf::Color outline = sf::Color(255, 255, 255), int outline_thickness = 0, bool controllable = false)
     {
-        Entity *ptr = new Entity(tag, m_totalEntities++, radius, edges, px, py, sx, sy, controllable);
+        Entity *ptr = new Entity(tag, m_totalEntities++, radius, edges, px, py, sx, sy, color, outline, outline_thickness, controllable);
         m_entities.push_back(ptr);
         return ptr;
-    }
+    } 
 
     void removeEntity(int id)
     {
