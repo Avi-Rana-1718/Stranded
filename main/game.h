@@ -1,5 +1,5 @@
 #include "entityManager.h"
-#include<math.h>
+#include <math.h>
 // Constants
 
 #define WINDOW_WIDTH 1800
@@ -21,7 +21,7 @@ class Game
     void SDraw(const std::vector<Entity *> &entities);
     void SMove(const std::vector<Entity *> &entities);
     void SInput(Entity *player); // player input
-    bool SCollision(Entity* entity);
+    bool SCollision(Entity *entity);
     void SUserInterface();
 
     // Helper functions declarations
@@ -45,15 +45,14 @@ public:
         {
             std::cout << "Font not found!";
         }
-
     }
 
     void run()
     {
         // declarations
         entities.addEntities("Enemy", 40, 3, 400, 100, 1, 2, sf::Color(0, 255, 128));
-        entities.addEntities("Enemy", 45, 5, 300, 200, 2, 2, sf::Color(255,102,178));
-        entities.addEntities("Enemy", 30, 4, 600, 400, 5, 3, sf::Color(102,178,255));
+        entities.addEntities("Enemy", 45, 5, 300, 200, 2, 2, sf::Color(255, 102, 178));
+        entities.addEntities("Enemy", 30, 4, 600, 400, 5, 3, sf::Color(102, 178, 255));
 
         SUserInterface();
 
@@ -71,7 +70,7 @@ public:
 
             SDraw(entities.getEntities());
             SMove(entities.getEntities());
-                        SInput(player);
+            SInput(player);
 
             frames++;
         }
@@ -87,7 +86,7 @@ void Game::SDraw(const std::vector<Entity *> &entities)
     {
         if (entity->cshape != NULL)
         {
-                        entity->cshape->circle.rotate(1.f);
+            entity->cshape->circle.rotate(1.f);
             window.draw(entity->cshape->circle);
         }
     }
@@ -120,19 +119,19 @@ void Game::SMove(const std::vector<Entity *> &entities)
 
 void Game::SInput(Entity *player)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX - player->cshape->radius>0))
     {
         player->ctransform->posX -= player->ctransform->speedX;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->radius<WINDOW_WIDTH))
     {
         player->ctransform->posX += player->ctransform->speedX;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY - player->cshape->radius>0))
     {
         player->ctransform->posY -= player->ctransform->speedY;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->radius<WINDOW_HEIGHT))
     {
         player->ctransform->posY += player->ctransform->speedY;
     }
@@ -140,21 +139,21 @@ void Game::SInput(Entity *player)
 
 bool Game::SCollision(Entity *entity)
 {
-        if ((entity->ctransform != NULL) && (entity->controllable != true))
+    if ((entity->ctransform != NULL) && (entity->controllable != true))
+    {
+        if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius > WINDOW_WIDTH))
         {
-            if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius> WINDOW_WIDTH))
-            {
-                entity->ctransform->speedX *= -1;
-                return true;
-            }
-            if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius> WINDOW_HEIGHT))
-            {
-                entity->ctransform->speedY *= -1;
-                return true;
-            }
+            entity->ctransform->speedX *= -1;
+            return true;
         }
+        if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius > WINDOW_HEIGHT))
+        {
+            entity->ctransform->speedY *= -1;
+            return true;
+        }
+    }
 
-        return false;
+    return false;
 }
 
 void Game::SUserInterface()
