@@ -8,7 +8,7 @@ public:
     {
 
         radius = r;
-    circle.setOrigin(radius, radius);
+        circle.setOrigin(radius, radius);
         circle.setFillColor(color);
         circle.setOutlineColor(outline_color);
         circle.setOutlineThickness(outline_thickness);

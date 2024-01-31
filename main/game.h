@@ -1,5 +1,6 @@
 #include "entityManager.h"
 #include <math.h>
+
 // Constants
 
 #define WINDOW_WIDTH 1800
@@ -96,8 +97,7 @@ void Game::SDraw(const std::vector<Entity *> &entities)
 {
     window.clear();
 
-
-        // Draw Bounds
+    // Draw Bounds
     for (auto entity : bounds)
     {
         window.draw(entity);
@@ -135,12 +135,12 @@ void Game::SMove(const std::vector<Entity *> &entities)
             entity->cshape->circle.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
 
-    //     for (auto entity2 : entities)
-    //     {
+        //     for (auto entity2 : entities)
+        //     {
 
-    // sf::Vector2f bound = 
+        // sf::Vector2f bound =
 
-    //     }
+        //     }
     }
 }
 
@@ -201,13 +201,13 @@ void Game::SUserInterface()
 
     labels.push_back(text);
 
-      sf::Text text2;
+    sf::Text text2;
 
     // select the font
     text2.setFont(font); // font is a sf::Font
     text2.setString("100");
     text2.setCharacterSize(24); // in pixels, not points!
-    text2.setPosition(0, WINDOW_HEIGHT-24);
+    text2.setPosition(0, WINDOW_HEIGHT - 24);
     labels.push_back(text2);
 }
 
@@ -224,7 +224,8 @@ void Game::displayDevConsole(const std::vector<Entity *> &entities)
 
     bounds.erase(bounds.begin(), bounds.end());
 
-    for(auto entity : entities) {
+    for (auto entity : entities)
+    {
         sf::CircleShape temp(entity->cshape->radius, 4);
         temp.setOrigin(entity->cshape->radius, entity->cshape->radius);
         temp.setPosition(entity->ctransform->posX, entity->ctransform->posY);
