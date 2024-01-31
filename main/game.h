@@ -16,19 +16,20 @@ class Game
     bool is_running = true;
     int frames;
 
+    bool devMode = false;
+
     // System declarations
 
     void SDraw(const std::vector<Entity *> &entities);
     void SMove(const std::vector<Entity *> &entities);
     void SInput(Entity *player); // player input
-    bool SCollision(Entity *entity);
+    void SCollision(const std::vector<Entity *> &entities);
     void SUserInterface();
 
     // Helper functions declarations
 
     Entity *spawnPlayer();
-
-    // todo
+    void displayDevConsole();
 
 public:
     Entity *player;
@@ -36,6 +37,7 @@ public:
     {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
         window.setFramerateLimit(60);
+
         player = spawnPlayer();
 
         frames = 0;
@@ -53,6 +55,9 @@ public:
         entities.addEntities("Enemy", 40, 3, 400, 100, 1, 2, sf::Color(0, 255, 128));
         entities.addEntities("Enemy", 45, 5, 300, 200, 2, 2, sf::Color(255, 102, 178));
         entities.addEntities("Enemy", 30, 4, 600, 400, 5, 3, sf::Color(102, 178, 255));
+        entities.addEntities("Enemy", 40, 3, 400, 100, 3, 2, sf::Color(0, 255, 128));
+        entities.addEntities("Enemy", 45, 5, 300, 200, 5, 2, sf::Color(255, 102, 178));
+        entities.addEntities("Enemy", 30, 4, 600, 400, 1, 3, sf::Color(102, 178, 255));
 
         SUserInterface();
 
@@ -70,7 +75,13 @@ public:
 
             SDraw(entities.getEntities());
             SMove(entities.getEntities());
+            SCollision(entities.getEntities());
             SInput(player);
+
+            if (devMode)
+            {
+                displayDevConsole();
+            }
 
             frames++;
         }
@@ -105,7 +116,6 @@ void Game::SMove(const std::vector<Entity *> &entities)
 
     for (auto entity : entities)
     {
-        SCollision(entity);
         if ((entity->ctransform != NULL) && (entity->controllable == false))
         {
             entity->cshape->circle.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
@@ -114,46 +124,59 @@ void Game::SMove(const std::vector<Entity *> &entities)
         {
             entity->cshape->circle.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
+
+    //     for (auto entity2 : entities)
+    //     {
+
+    // sf::Vector2f bound = 
+
+    //     }
     }
 }
 
 void Game::SInput(Entity *player)
 {
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX - player->cshape->radius>0))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX - player->cshape->radius > 0))
     {
         player->ctransform->posX -= player->ctransform->speedX;
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->radius<WINDOW_WIDTH))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->radius < WINDOW_WIDTH))
     {
         player->ctransform->posX += player->ctransform->speedX;
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY - player->cshape->radius>0))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY - player->cshape->radius > 0))
     {
         player->ctransform->posY -= player->ctransform->speedY;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->radius<WINDOW_HEIGHT))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->radius < WINDOW_HEIGHT))
     {
         player->ctransform->posY += player->ctransform->speedY;
     }
+
+    //
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::F3))
+    {
+        devMode = true;
+    }
 }
 
-bool Game::SCollision(Entity *entity)
+void Game::SCollision(const std::vector<Entity *> &entities)
 {
-    if ((entity->ctransform != NULL) && (entity->controllable != true))
+    for (auto entity : entities)
     {
-        if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius > WINDOW_WIDTH))
+        if ((entity->ctransform != NULL) && (entity->controllable != true))
         {
-            entity->ctransform->speedX *= -1;
-            return true;
-        }
-        if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius > WINDOW_HEIGHT))
-        {
-            entity->ctransform->speedY *= -1;
-            return true;
+            if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius > WINDOW_WIDTH))
+            {
+                entity->ctransform->speedX *= -1;
+            }
+            if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius > WINDOW_HEIGHT))
+            {
+                entity->ctransform->speedY *= -1;
+            }
         }
     }
-
-    return false;
 }
 
 void Game::SUserInterface()
@@ -174,4 +197,9 @@ void Game::SUserInterface()
 Entity *Game::spawnPlayer()
 {
     return entities.addEntities("Player", 50, 6, 100, 110, 10, 10, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
+}
+
+void Game::displayDevConsole()
+{
+    labels[0].setString("Dev console \nFPS Limit: 60\nTime elapsed: " + std::to_string(frames / 60));
 }

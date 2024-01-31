@@ -9,12 +9,15 @@ public:
     CShape *cshape = NULL;
     CTransform *ctransform = NULL;
     
+    int e_health;
+
     bool controllable = false;
 
     Entity(std::string t, int id, float radius, float edges, float px, float py, float sx, float sy, sf::Color color, sf::Color outline_color, int outline_thickness, bool controll)
     {
         tag = t;
         e_id = id;
+        e_health=1;
         cshape = new CShape(radius, edges, color, outline_color, outline_thickness);
         ctransform = new CTransform(px, py, sx, sy, 0);
         controllable=controll;
