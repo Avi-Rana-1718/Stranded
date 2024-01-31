@@ -13,6 +13,8 @@ class Game
     EntityManager entities;
     std::vector<sf::Text> labels;
 
+    std::vector<sf::CircleShape> bounds;
+
     bool is_running = true;
     int frames;
 
@@ -29,7 +31,7 @@ class Game
     // Helper functions declarations
 
     Entity *spawnPlayer();
-    void displayDevConsole();
+    void displayDevConsole(const std::vector<Entity *> &entities);
 
 public:
     Entity *player;
@@ -80,7 +82,7 @@ public:
 
             if (devMode)
             {
-                displayDevConsole();
+                displayDevConsole(entities.getEntities());
             }
 
             frames++;
@@ -93,6 +95,14 @@ public:
 void Game::SDraw(const std::vector<Entity *> &entities)
 {
     window.clear();
+
+
+        // Draw Bounds
+    for (auto entity : bounds)
+    {
+        window.draw(entity);
+    }
+
     for (auto entity : entities)
     {
         if (entity->cshape != NULL)
@@ -190,6 +200,15 @@ void Game::SUserInterface()
     text.setCharacterSize(24); // in pixels, not points!
 
     labels.push_back(text);
+
+      sf::Text text2;
+
+    // select the font
+    text2.setFont(font); // font is a sf::Font
+    text2.setString("100");
+    text2.setCharacterSize(24); // in pixels, not points!
+    text2.setPosition(0, WINDOW_HEIGHT-24);
+    labels.push_back(text2);
 }
 
 // Helper functions
@@ -199,7 +218,19 @@ Entity *Game::spawnPlayer()
     return entities.addEntities("Player", 50, 6, 100, 110, 10, 10, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
 }
 
-void Game::displayDevConsole()
+void Game::displayDevConsole(const std::vector<Entity *> &entities)
 {
-    labels[0].setString("Dev console \nFPS Limit: 60\nTime elapsed: " + std::to_string(frames / 60));
+    labels[0].setString("Dev console \nFPS Limit: 60\nTime elapsed: " + std::to_string(frames / 60) + "\nPlayer:\nX: " + std::to_string(player->ctransform->posX) + " Y: " + std::to_string(player->ctransform->posY));
+
+    bounds.erase(bounds.begin(), bounds.end());
+
+    for(auto entity : entities) {
+        sf::CircleShape temp(entity->cshape->radius, 4);
+        temp.setOrigin(entity->cshape->radius, entity->cshape->radius);
+        temp.setPosition(entity->ctransform->posX, entity->ctransform->posY);
+        temp.setFillColor(sf::Color(0, 0, 0, 0));
+        temp.setOutlineThickness(1);
+        temp.setOutlineColor(sf::Color::White);
+        bounds.push_back(temp);
+    }
 }
