@@ -14,8 +14,6 @@ class Game
     EntityManager entities;
     std::vector<sf::Text> labels;
 
-    std::vector<sf::CircleShape> bounds;
-
     bool is_running = true;
     int frames;
 
@@ -27,6 +25,7 @@ class Game
     void SMove(const std::vector<Entity *> &entities);
     void SInput(Entity *player); // player input
     void SCollision(const std::vector<Entity *> &entities);
+
     void SUserInterface();
 
     // Helper functions declarations
@@ -40,6 +39,7 @@ public:
     Game()
     {
         window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+
         window.setFramerateLimit(60);
 
         player = spawnPlayer();
@@ -92,22 +92,16 @@ void Game::SDraw(const std::vector<Entity *> &entities)
 {
     window.clear();
 
-    // Draw Bounds
-    for (auto entity : bounds)
-    {
-        window.draw(entity);
-    }
-
-    for (auto entity : entities)
+    for (auto &entity : entities)
     {
         if (entity->cshape != NULL)
         {
-            window.draw(entity->cshape->circle);
+            window.draw(entity->cshape->rect);
         }
     }
 
     // Draw UI
-    for (auto text : labels)
+    for (auto &text : labels)
     {
         window.draw(text);
     }
@@ -118,34 +112,34 @@ void Game::SDraw(const std::vector<Entity *> &entities)
 void Game::SMove(const std::vector<Entity *> &entities)
 {
 
-    for (auto entity : entities)
+    for (auto &entity : entities)
     {
         if ((entity->ctransform != NULL) && (entity->controllable == false))
         {
-            entity->cshape->circle.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
+            entity->cshape->rect.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
         }
         else if (entity->ctransform != NULL)
         {
-            entity->cshape->circle.setPosition(entity->ctransform->posX, entity->ctransform->posY);
+            entity->cshape->rect.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
     }
 }
 
 void Game::SInput(Entity *player)
 {
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX - player->cshape->radius > 0))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX > 0))
     {
         player->ctransform->posX -= player->ctransform->speedX;
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->radius < WINDOW_WIDTH))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->width < WINDOW_WIDTH))
     {
         player->ctransform->posX += player->ctransform->speedX;
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY - player->cshape->radius > 0))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY > 0))
     {
         player->ctransform->posY -= player->ctransform->speedY;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->radius < WINDOW_HEIGHT))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->height < WINDOW_HEIGHT))
     {
         player->ctransform->posY += player->ctransform->speedY;
     }
@@ -160,17 +154,38 @@ void Game::SInput(Entity *player)
 
 void Game::SCollision(const std::vector<Entity *> &entities)
 {
-    for (auto entity : entities)
+
+    for (int i = 0; i < entities.size(); i++)
     {
-        if ((entity->ctransform != NULL) && (entity->controllable != true))
+
+
+        if ((entities[i]->ctransform != NULL) && (entities[i]->controllable != true))
         {
-            if ((entity->ctransform->posX < 0) || (entity->ctransform->posX  + entity->cshape->radius*2 > WINDOW_WIDTH))
+            if ((entities[i]->ctransform->posX < 0) || (entities[i]->ctransform->posX + entities[i]->cshape->width > WINDOW_WIDTH))
             {
-                entity->ctransform->speedX *= -1;
+                entities[i]->ctransform->speedX *= -1;
             }
-            if ((entity->ctransform->posY < 0) || (entity->ctransform->posY + entity->cshape->radius*2 > WINDOW_HEIGHT))
+            if ((entities[i]->ctransform->posY < 0) || (entities[i]->ctransform->posY + entities[i]->cshape->height > WINDOW_HEIGHT))
             {
-                entity->ctransform->speedY *= -1;
+                entities[i]->ctransform->speedY *= -1;
+            }
+        }
+
+        for (int j = i + 1; j < entities.size(); j++)
+        {
+            if (entities[i]->cshape->rect.getGlobalBounds().intersects(entities[j]->cshape->rect.getGlobalBounds()) && entities[i]->e_id != entities[j]->e_id)
+            {
+                if (entities[i]->tag != "Player")
+                {
+                    entities[i]->ctransform->speedX *= -1;
+                    entities[i]->ctransform->speedY *= -1;
+                }
+
+                if (entities[j]->tag != "Player")
+                {
+                    entities[j]->ctransform->speedX *= -1;
+                    entities[j]->ctransform->speedY *= -1;
+                }
             }
         }
     }
@@ -202,33 +217,21 @@ void Game::SUserInterface()
 
 Entity *Game::spawnPlayer()
 {
-    return entities.addEntities("Player", 50.f, 6.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
+    return entities.addEntities("Player", 100.f, 100.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
 }
 
 void Game::displayDevConsole(const std::vector<Entity *> &entities)
 {
     labels[0].setString(std::to_string(frames / 60) + "\nTotal enities: " + std::to_string(entities.size()));
-
-    bounds.erase(bounds.begin(), bounds.end());
-
-    // for (auto entity : entities)
-    // {
-    //     sf::CircleShape temp(entity->cshape->radius, 4.f);
-    //     temp.setPosition(entity->ctransform->posX, entity->ctransform->posY);
-    //     temp.setFillColor(sf::Color(0, 0, 0, 0));
-    //     temp.setOutlineThickness(1);
-    //     temp.setOutlineColor(sf::Color::White);
-    //     bounds.push_back(temp);
-    // }
 }
 
 void Game::spawnEnemy()
 {
 
-    for (int i = 0; i < 5000; i++)
+    for (int i = 0; i < 1; i++)
     {
-        entities.addEntities("Enemy", 40.f, 4.f, 500.f + i * 60, 300.f + i * 60, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
-        entities.addEntities("Enemy", 45.f, 4.f, 100.f + i * 60, 200.f + i * 60, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
-        entities.addEntities("Enemy", 30.f, 4.f, 300.f + i * 60, 100.f + i * 60, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
+        entities.addEntities("Enemy", 100.f, 90.f, 300.f+i*10, 300.f+i*10, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
+        entities.addEntities("Enemy", 150.f, 80.f, 100.f+i*10, 200.f+i*10, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
+        entities.addEntities("Enemy", 200.f, 100.f, 300.f+i*10, 100.f+i*10, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
     }
 }

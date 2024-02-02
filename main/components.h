@@ -2,16 +2,17 @@ class CShape
 {
     
 public:
-    int radius;
-    sf::CircleShape circle;
+    int width;
+    int height;
+    sf::RectangleShape rect;
 
-    CShape(float r, float edges, sf::Color color, sf::Color outline_color, int outline_thickness) : circle(r, edges)
+    CShape(float w, float h, sf::Color color, sf::Color outline_color, int outline_thickness) : rect(sf::Vector2f(w, h))
     {
-
-        radius = r;
-        circle.setFillColor(color);
-        circle.setOutlineColor(outline_color);
-        circle.setOutlineThickness(outline_thickness);
+        width=w;
+        height=h;
+        rect.setFillColor(color);
+        rect.setOutlineColor(outline_color);
+        rect.setOutlineThickness(outline_thickness);
     }
 };
 
