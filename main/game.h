@@ -32,6 +32,7 @@ class Game
     // Helper functions declarations
 
     Entity *spawnPlayer();
+    void spawnEnemy();
     void displayDevConsole(const std::vector<Entity *> &entities);
 
 public:
@@ -54,15 +55,9 @@ public:
 
     void run()
     {
-        // declarations
-        entities.addEntities("Enemy", 40, 3, 400, 100, 1, 2, sf::Color(0, 255, 128));
-        entities.addEntities("Enemy", 45, 5, 300, 200, 2, 2, sf::Color(255, 102, 178));
-        entities.addEntities("Enemy", 30, 4, 600, 400, 5, 3, sf::Color(102, 178, 255));
-        entities.addEntities("Enemy", 40, 3, 400, 100, 3, 2, sf::Color(0, 255, 128));
-        entities.addEntities("Enemy", 45, 5, 300, 200, 5, 2, sf::Color(255, 102, 178));
-        entities.addEntities("Enemy", 30, 4, 600, 400, 1, 3, sf::Color(102, 178, 255));
 
         SUserInterface();
+        spawnEnemy();
 
         while (is_running)
         {
@@ -107,7 +102,6 @@ void Game::SDraw(const std::vector<Entity *> &entities)
     {
         if (entity->cshape != NULL)
         {
-            entity->cshape->circle.rotate(1.f);
             window.draw(entity->cshape->circle);
         }
     }
@@ -134,13 +128,6 @@ void Game::SMove(const std::vector<Entity *> &entities)
         {
             entity->cshape->circle.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
-
-        //     for (auto entity2 : entities)
-        //     {
-
-        // sf::Vector2f bound =
-
-        //     }
     }
 }
 
@@ -177,11 +164,11 @@ void Game::SCollision(const std::vector<Entity *> &entities)
     {
         if ((entity->ctransform != NULL) && (entity->controllable != true))
         {
-            if ((entity->ctransform->posX - entity->cshape->radius < 0) || (entity->ctransform->posX + entity->cshape->radius > WINDOW_WIDTH))
+            if ((entity->ctransform->posX < 0) || (entity->ctransform->posX  + entity->cshape->radius*2 > WINDOW_WIDTH))
             {
                 entity->ctransform->speedX *= -1;
             }
-            if ((entity->ctransform->posY - entity->cshape->radius < 0) || (entity->ctransform->posY + entity->cshape->radius > WINDOW_HEIGHT))
+            if ((entity->ctransform->posY < 0) || (entity->ctransform->posY + entity->cshape->radius*2 > WINDOW_HEIGHT))
             {
                 entity->ctransform->speedY *= -1;
             }
@@ -215,23 +202,33 @@ void Game::SUserInterface()
 
 Entity *Game::spawnPlayer()
 {
-    return entities.addEntities("Player", 50, 6, 100, 110, 10, 10, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
+    return entities.addEntities("Player", 50.f, 6.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
 }
 
 void Game::displayDevConsole(const std::vector<Entity *> &entities)
 {
-    labels[0].setString("Dev console \nFPS Limit: 60\nTime elapsed: " + std::to_string(frames / 60) + "\nPlayer:\nX: " + std::to_string(player->ctransform->posX) + " Y: " + std::to_string(player->ctransform->posY));
+    labels[0].setString(std::to_string(frames / 60) + "\nTotal enities: " + std::to_string(entities.size()));
 
     bounds.erase(bounds.begin(), bounds.end());
 
-    for (auto entity : entities)
+    // for (auto entity : entities)
+    // {
+    //     sf::CircleShape temp(entity->cshape->radius, 4.f);
+    //     temp.setPosition(entity->ctransform->posX, entity->ctransform->posY);
+    //     temp.setFillColor(sf::Color(0, 0, 0, 0));
+    //     temp.setOutlineThickness(1);
+    //     temp.setOutlineColor(sf::Color::White);
+    //     bounds.push_back(temp);
+    // }
+}
+
+void Game::spawnEnemy()
+{
+
+    for (int i = 0; i < 5000; i++)
     {
-        sf::CircleShape temp(entity->cshape->radius, 4);
-        temp.setOrigin(entity->cshape->radius, entity->cshape->radius);
-        temp.setPosition(entity->ctransform->posX, entity->ctransform->posY);
-        temp.setFillColor(sf::Color(0, 0, 0, 0));
-        temp.setOutlineThickness(1);
-        temp.setOutlineColor(sf::Color::White);
-        bounds.push_back(temp);
+        entities.addEntities("Enemy", 40.f, 4.f, 500.f + i * 60, 300.f + i * 60, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
+        entities.addEntities("Enemy", 45.f, 4.f, 100.f + i * 60, 200.f + i * 60, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
+        entities.addEntities("Enemy", 30.f, 4.f, 300.f + i * 60, 100.f + i * 60, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
     }
 }
