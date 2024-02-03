@@ -10,8 +10,8 @@ sf::Font font;
 
 class Game
 {
-    sf::RenderWindow window;
-    EntityManager entities;
+    sf::RenderWindow g_window;
+    EntityManager g_entities;
     std::vector<sf::Text> labels;
 
     bool is_running = true;
@@ -32,19 +32,21 @@ class Game
 
     Entity *spawnPlayer();
     void spawnEnemy();
+    void spawnBullet();
+
     void displayDevConsole(const std::vector<Entity *> &entities);
 
 public:
     Entity *player;
     Game()
     {
-        window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-
-        window.setFramerateLimit(60);
+        g_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+        g_window.setFramerateLimit(60);
 
         player = spawnPlayer();
 
         frames = 0;
+        is_running = true;
 
         // fonts
         if (!font.loadFromFile("assets/noto.ttf"))
@@ -62,23 +64,23 @@ public:
         while (is_running)
         {
             sf::Event event;
-            while (window.pollEvent(event))
+            while (g_window.pollEvent(event))
             {
                 if (event.type == sf::Event::Closed)
                 {
                     is_running = false;
-                    window.close();
+                    g_window.close();
                 }
             }
 
-            SDraw(entities.getEntities());
-            SMove(entities.getEntities());
-            SCollision(entities.getEntities());
+            SDraw(g_entities.getEntities());
+            SMove(g_entities.getEntities());
+            SCollision(g_entities.getEntities());
             SInput(player);
 
             if (devMode)
             {
-                displayDevConsole(entities.getEntities());
+                displayDevConsole(g_entities.getEntities());
             }
 
             frames++;
@@ -90,23 +92,23 @@ public:
 
 void Game::SDraw(const std::vector<Entity *> &entities)
 {
-    window.clear();
+    g_window.clear();
 
     for (auto &entity : entities)
     {
         if (entity->cshape != NULL)
         {
-            window.draw(entity->cshape->rect);
+            g_window.draw(entity->cshape->rect);
         }
     }
 
     // Draw UI
     for (auto &text : labels)
     {
-        window.draw(text);
+        g_window.draw(text);
     }
 
-    window.display();
+    g_window.display();
 }
 
 void Game::SMove(const std::vector<Entity *> &entities)
@@ -150,6 +152,10 @@ void Game::SInput(Entity *player)
     {
         devMode = true;
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        spawnBullet();
+    }
 }
 
 void Game::SCollision(const std::vector<Entity *> &entities)
@@ -157,7 +163,6 @@ void Game::SCollision(const std::vector<Entity *> &entities)
 
     for (int i = 0; i < entities.size(); i++)
     {
-
 
         if ((entities[i]->ctransform != NULL) && (entities[i]->controllable != true))
         {
@@ -180,11 +185,19 @@ void Game::SCollision(const std::vector<Entity *> &entities)
                     entities[i]->ctransform->speedX *= -1;
                     entities[i]->ctransform->speedY *= -1;
                 }
+                else
+                {
+                    g_entities.removeEntity(entities[j]->e_id);
+                }
 
                 if (entities[j]->tag != "Player")
                 {
                     entities[j]->ctransform->speedX *= -1;
                     entities[j]->ctransform->speedY *= -1;
+                }
+                else
+                {
+                    g_entities.removeEntity(entities[i]->e_id);
                 }
             }
         }
@@ -217,7 +230,7 @@ void Game::SUserInterface()
 
 Entity *Game::spawnPlayer()
 {
-    return entities.addEntities("Player", 100.f, 100.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
+    return g_entities.addEntities("Player", 100.f, 100.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
 }
 
 void Game::displayDevConsole(const std::vector<Entity *> &entities)
@@ -230,8 +243,13 @@ void Game::spawnEnemy()
 
     for (int i = 0; i < 1; i++)
     {
-        entities.addEntities("Enemy", 100.f, 90.f, 300.f+i*10, 300.f+i*10, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
-        entities.addEntities("Enemy", 150.f, 80.f, 100.f+i*10, 200.f+i*10, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
-        entities.addEntities("Enemy", 200.f, 100.f, 300.f+i*10, 100.f+i*10, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
+        g_entities.addEntities("Enemy", 100.f, 90.f, 300.f + i * 10, 300.f + i * 10, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
+        g_entities.addEntities("Enemy", 150.f, 80.f, 100.f + i * 10, 200.f + i * 10, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
+        g_entities.addEntities("Enemy", 200.f, 100.f, 300.f + i * 10, 100.f + i * 10, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
     }
+}
+
+void Game::spawnBullet()
+{
+    g_entities.addEntities("Bullet", 10.f, 10.f, 100.f, 100.f, 1.f, 1.f, sf::Color::White);
 }

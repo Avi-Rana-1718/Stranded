@@ -2,13 +2,15 @@
 
 class Entity
 {
+
 public:
+
     std::string tag;
     int e_id;
 
     CShape *cshape = NULL;
     CTransform *ctransform = NULL;
-    
+
     int e_health;
 
     bool controllable = false;
@@ -17,13 +19,23 @@ public:
     {
         tag = t;
         e_id = id;
-        e_health=1;
-        cshape = new CShape(w, h, color, outline_color, outline_thickness);
-        ctransform = new CTransform(px, py, sx, sy, 0);
-        controllable=controll;
+        e_health = 1;
+
+        if (w != 0 || h != 0)
+        {
+            cshape = new CShape(w, h, color, outline_color, outline_thickness);
+        }
+
+        if (px != 0 && py != 0 && sx != 0 && sy != 0)
+        {
+            ctransform = new CTransform(px, py, sx, sy, 0);
+        }
+
+        controllable = controll;
     }
 
-    ~ Entity() {
+    ~Entity()
+    {
         delete cshape;
         delete ctransform;
     }
@@ -40,7 +52,7 @@ public:
         Entity *ptr = new Entity(tag, m_totalEntities++, w, h, px, py, sx, sy, color, outline, outline_thickness, controllable);
         m_entities.push_back(ptr);
         return ptr;
-    } 
+    }
 
     void removeEntity(int id)
     {
@@ -50,6 +62,7 @@ public:
             {
                 delete (m_entities.at(i));
                 m_entities.erase(m_entities.begin() + i);
+                break;
             }
         }
     }
