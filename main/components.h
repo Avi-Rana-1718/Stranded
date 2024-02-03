@@ -1,21 +1,3 @@
-class CShape
-{
-    
-public:
-    int width;
-    int height;
-    sf::RectangleShape rect;
-
-    CShape(float w, float h, sf::Color color, sf::Color outline_color, int outline_thickness) : rect(sf::Vector2f(w, h))
-    {
-        width=w;
-        height=h;
-        rect.setFillColor(color);
-        rect.setOutlineColor(outline_color);
-        rect.setOutlineThickness(outline_thickness);
-    }
-};
-
 class CTransform
 {
 public:
@@ -39,5 +21,31 @@ public:
         speedX = sx;
         speedY = sy;
         angle = a;
+    }
+};
+
+class CSprite {
+public:
+
+sf::Sprite sprite;
+CSprite(sf::Texture &texture) {
+    sprite.setTexture(texture);
+    sprite.setOrigin(0, 0);
+    sprite.setScale(sf::Vector2f(3.f,3.f));
+}
+
+};
+
+class CTexture {
+    public:
+
+    sf::Texture texture;
+    
+    void set(std::string img_path) {
+if (!texture.loadFromFile("assets/sprite/" + img_path))
+{
+    std::cout<<img_path<<"not found";
+}
+
     }
 };

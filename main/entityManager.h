@@ -4,40 +4,42 @@ class Entity
 {
 
 public:
-
     std::string tag;
     int e_id;
 
-    CShape *cshape = NULL;
     CTransform *ctransform = NULL;
+    CSprite *csprite = NULL;
 
     int e_health;
 
+    int w, h;
+
+    float scale=3.f;
+
     bool controllable = false;
 
-    Entity(std::string t, int id, float w, float h, float px, float py, float sx, float sy, sf::Color color, sf::Color outline_color, int outline_thickness, bool controll)
+    Entity(std::string t, int id, float width, float height, float px, float py, float sx, float sy, bool controll, sf::Texture &texture)
     {
         tag = t;
         e_id = id;
         e_health = 1;
 
-        if (w != 0 || h != 0)
-        {
-            cshape = new CShape(w, h, color, outline_color, outline_thickness);
-        }
+        w = width*scale;
+        h = height*scale;
 
         if (px != 0 && py != 0 && sx != 0 && sy != 0)
         {
             ctransform = new CTransform(px, py, sx, sy, 0);
         }
+        csprite = new CSprite(texture);
 
         controllable = controll;
     }
 
     ~Entity()
     {
-        delete cshape;
         delete ctransform;
+        delete csprite;
     }
 };
 
@@ -47,9 +49,13 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, float w, float h, float px, float py, float sx, float sy, sf::Color color, sf::Color outline = sf::Color(255, 255, 255), int outline_thickness = 0, bool controllable = false)
+    Entity *addEntities(std::string tag, float sx, float sy, sf::Texture &texture, bool controllable = false)
     {
-        Entity *ptr = new Entity(tag, m_totalEntities++, w, h, px, py, sx, sy, color, outline, outline_thickness, controllable);
+
+        int px = (rand() % (1700 - 100) + 100);
+        int py = (rand() % (600 - 100) + 100);
+
+        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, sx, sy, controllable, texture);
         m_entities.push_back(ptr);
         return ptr;
     }

@@ -1,5 +1,6 @@
 #include "entityManager.h"
 #include <math.h>
+#include <string>
 
 // Constants
 
@@ -11,6 +12,8 @@ sf::Font font;
 class Game
 {
     sf::RenderWindow g_window;
+    sf::Event event;
+
     EntityManager g_entities;
     std::vector<sf::Text> labels;
 
@@ -32,9 +35,13 @@ class Game
 
     Entity *spawnPlayer();
     void spawnEnemy();
-    void spawnBullet();
+    // void spawnBullet();
 
     void displayDevConsole(const std::vector<Entity *> &entities);
+
+    // Textures declaration
+    CTexture playerTexture;
+    CTexture orcTexture;
 
 public:
     Entity *player;
@@ -42,6 +49,10 @@ public:
     {
         g_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
         g_window.setFramerateLimit(60);
+
+        // load textures
+        playerTexture.set("player_idle.png");
+        orcTexture.set("skeleton_idle.png");
 
         player = spawnPlayer();
 
@@ -63,7 +74,6 @@ public:
 
         while (is_running)
         {
-            sf::Event event;
             while (g_window.pollEvent(event))
             {
                 if (event.type == sf::Event::Closed)
@@ -96,9 +106,9 @@ void Game::SDraw(const std::vector<Entity *> &entities)
 
     for (auto &entity : entities)
     {
-        if (entity->cshape != NULL)
+        if (entity->csprite != NULL)
         {
-            g_window.draw(entity->cshape->rect);
+            g_window.draw(entity->csprite->sprite);
         }
     }
 
@@ -118,11 +128,11 @@ void Game::SMove(const std::vector<Entity *> &entities)
     {
         if ((entity->ctransform != NULL) && (entity->controllable == false))
         {
-            entity->cshape->rect.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
+            entity->csprite->sprite.setPosition(entity->ctransform->posX += entity->ctransform->speedX, entity->ctransform->posY += entity->ctransform->speedY);
         }
         else if (entity->ctransform != NULL)
         {
-            entity->cshape->rect.setPosition(entity->ctransform->posX, entity->ctransform->posY);
+            entity->csprite->sprite.setPosition(entity->ctransform->posX, entity->ctransform->posY);
         }
     }
 }
@@ -132,16 +142,20 @@ void Game::SInput(Entity *player)
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX > 0))
     {
         player->ctransform->posX -= player->ctransform->speedX;
+        player->csprite->sprite.setScale(sf::Vector2f(-1*player->scale, player->scale));
+        player->csprite->sprite.setOrigin(player->w/player->scale, 0);
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->cshape->width < WINDOW_WIDTH))
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->w < WINDOW_WIDTH))
     {
         player->ctransform->posX += player->ctransform->speedX;
+        player->csprite->sprite.setScale(sf::Vector2f(player->scale, player->scale));
+        player->csprite->sprite.setOrigin(0, 0);
     }
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && (player->ctransform->posY > 0))
     {
         player->ctransform->posY -= player->ctransform->speedY;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->cshape->height < WINDOW_HEIGHT))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && (player->ctransform->posY + player->h < WINDOW_HEIGHT))
     {
         player->ctransform->posY += player->ctransform->speedY;
     }
@@ -152,10 +166,10 @@ void Game::SInput(Entity *player)
     {
         devMode = true;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    {
-        spawnBullet();
-    }
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    // {
+    //     spawnBullet();
+    // }
 }
 
 void Game::SCollision(const std::vector<Entity *> &entities)
@@ -166,11 +180,11 @@ void Game::SCollision(const std::vector<Entity *> &entities)
 
         if ((entities[i]->ctransform != NULL) && (entities[i]->controllable != true))
         {
-            if ((entities[i]->ctransform->posX < 0) || (entities[i]->ctransform->posX + entities[i]->cshape->width > WINDOW_WIDTH))
+            if ((entities[i]->ctransform->posX < 0) || (entities[i]->ctransform->posX + entities[i]->h > WINDOW_WIDTH))
             {
                 entities[i]->ctransform->speedX *= -1;
             }
-            if ((entities[i]->ctransform->posY < 0) || (entities[i]->ctransform->posY + entities[i]->cshape->height > WINDOW_HEIGHT))
+            if ((entities[i]->ctransform->posY < 0) || (entities[i]->ctransform->posY + entities[i]->w > WINDOW_HEIGHT))
             {
                 entities[i]->ctransform->speedY *= -1;
             }
@@ -178,7 +192,7 @@ void Game::SCollision(const std::vector<Entity *> &entities)
 
         for (int j = i + 1; j < entities.size(); j++)
         {
-            if (entities[i]->cshape->rect.getGlobalBounds().intersects(entities[j]->cshape->rect.getGlobalBounds()) && entities[i]->e_id != entities[j]->e_id)
+            if (entities[i]->csprite->sprite.getGlobalBounds().intersects(entities[j]->csprite->sprite.getGlobalBounds()) && entities[i]->e_id != entities[j]->e_id)
             {
                 if (entities[i]->tag != "Player")
                 {
@@ -199,6 +213,11 @@ void Game::SCollision(const std::vector<Entity *> &entities)
                 {
                     g_entities.removeEntity(entities[i]->e_id);
                 }
+            }
+
+            if (entities[i]->tag == entities[j]->tag && entities[i]->ctransform->posX == entities[j]->ctransform->posX && entities[i]->ctransform->posY == entities[j]->ctransform->posY)
+            {
+                g_entities.removeEntity(entities[i]->e_id);
             }
         }
     }
@@ -230,7 +249,7 @@ void Game::SUserInterface()
 
 Entity *Game::spawnPlayer()
 {
-    return g_entities.addEntities("Player", 100.f, 100.f, 100.f, 110.f, 10.f, 10.f, sf::Color(220, 20, 60), sf::Color(255, 255, 255), 1, true);
+    return g_entities.addEntities("Player", 10.f, 10.f, playerTexture.texture, true);
 }
 
 void Game::displayDevConsole(const std::vector<Entity *> &entities)
@@ -241,15 +260,15 @@ void Game::displayDevConsole(const std::vector<Entity *> &entities)
 void Game::spawnEnemy()
 {
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
-        g_entities.addEntities("Enemy", 100.f, 90.f, 300.f + i * 10, 300.f + i * 10, 1.f, 2.f, sf::Color(0, 255, 128), sf::Color(255, 255, 255), 1);
-        g_entities.addEntities("Enemy", 150.f, 80.f, 100.f + i * 10, 200.f + i * 10, 2.f, 2.f, sf::Color(255, 102, 178), sf::Color(255, 255, 255), 1);
-        g_entities.addEntities("Enemy", 200.f, 100.f, 300.f + i * 10, 100.f + i * 10, 5.f, 3.f, sf::Color(102, 178, 255), sf::Color(255, 255, 255), 1);
+        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
+        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
+        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
     }
 }
 
-void Game::spawnBullet()
-{
-    g_entities.addEntities("Bullet", 10.f, 10.f, 100.f, 100.f, 1.f, 1.f, sf::Color::White);
-}
+// void Game::spawnBullet()
+// {
+//     g_entities.addEntities("Bullet", 10.f, 10.f, 100.f, 100.f, 1.f, 1.f, sf::Color::White);
+// }
