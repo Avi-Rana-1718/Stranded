@@ -4,7 +4,7 @@
 
 // Constants
 
-#define WINDOW_WIDTH 1800
+#define WINDOW_WIDTH sf::VideoMode::getDesktopMode().width
 #define WINDOW_HEIGHT 720
 
 sf::Font font;
@@ -35,13 +35,17 @@ class Game
 
     Entity *spawnPlayer();
     void spawnEnemy();
-    // void spawnBullet();
+    void spawnBullet();
+
 
     void displayDevConsole(const std::vector<Entity *> &entities);
 
     // Textures declaration
     CTexture playerTexture;
-    CTexture orcTexture;
+    CTexture skeletonTexture;
+    CTexture vampireTexture;
+
+    CTexture arrowTexture;
 
 public:
     Entity *player;
@@ -52,7 +56,9 @@ public:
 
         // load textures
         playerTexture.set("player_idle.png");
-        orcTexture.set("skeleton_idle.png");
+        skeletonTexture.set("skeleton_idle.png");
+        vampireTexture.set("vampire_idle.png");
+        arrowTexture.set("arrow.png");
 
         player = spawnPlayer();
 
@@ -166,10 +172,10 @@ void Game::SInput(Entity *player)
     {
         devMode = true;
     }
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    // {
-    //     spawnBullet();
-    // }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        spawnBullet();
+    }
 }
 
 void Game::SCollision(const std::vector<Entity *> &entities)
@@ -260,15 +266,15 @@ void Game::displayDevConsole(const std::vector<Entity *> &entities)
 void Game::spawnEnemy()
 {
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 4; i++)
     {
-        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
-        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
-        g_entities.addEntities("Enemy", 0.1, 0.1, orcTexture.texture);
+        g_entities.addEntities("Skeleton", 1, 1, skeletonTexture.texture);
+        g_entities.addEntities("Skeleton", 1, 1, skeletonTexture.texture);
+        g_entities.addEntities("Vampire", 1, 1, vampireTexture.texture);
     }
 }
 
-// void Game::spawnBullet()
-// {
-//     g_entities.addEntities("Bullet", 10.f, 10.f, 100.f, 100.f, 1.f, 1.f, sf::Color::White);
-// }
+void Game::spawnBullet()
+{
+    g_entities.addEntities("Arrow", 1, 1, arrowTexture.texture);
+}
