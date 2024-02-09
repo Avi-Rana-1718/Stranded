@@ -9,6 +9,141 @@
 
 sf::Font font;
 
+class Assets
+{
+public:
+    std::map<std::string, sf::Texture> m_textures; // map
+    std::map<std::string, Animation> m_animations;
+    std::map<std::string, sf::Sound> m_sounds;
+    std::map<std::string, sf::Font> m_fonts;
+
+      void addTexture(std::string path);
+      void addAnimation(std::string path);
+      void addSound(std::string path);
+      void addFont(std::string path);
+
+      sf::Texture getTexture();
+      Animation getAnimation();
+      sf::Sound getSound();
+      sf::Font getFont();
+};
+
+class GameEngine
+{
+public:
+    sf::RenderWindow g_window;
+    sf::Event event;
+
+    std::map<std::string, Scenes> scenes;
+    std::map<int, std::string> actions; 
+    Assets m_assets;
+
+    std::string currentScene;
+
+    int frames;
+    bool is_running;
+
+    void changeScene(std::string scene);
+
+    GameEngine()
+    {
+        g_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
+        g_window.setFramerateLimit(60);
+        init();
+    }
+
+    void init();
+    void run();
+    void quit();
+    void changeScene(std::string scene);
+    void SUserInput();
+};
+
+void GameEngine::init() {
+        is_running = true;
+        frames = 0;
+        currentScene = "Menu";
+
+}
+
+void GameEngine::run()
+{
+    while (is_running)
+    {   
+        if(event == sf::Event::KeyPressed || event == sf::Event::KeyReleased) {
+
+        }
+        frames++;
+    }
+}
+
+void GameEngine::quit()
+{
+    is_running = false;
+}
+
+void GameEngine::changeScene(std::string scene)
+{
+    currentScene = scene;
+}
+
+class Scenes 
+{
+public:
+    EntityManager g_entities;
+    void init();
+    void update();
+    void sRender();
+    void doAction();
+    void registerAction() {
+        actions[""]
+    };
+};
+
+class Scene_play : Scenes
+{ 
+public:
+    Entity *player;
+};
+
+void Scene_play::init() {
+    registerAction(sf::Keyboard::W, "UP");
+}
+
+
+class Action {
+
+    std::string m_name = "NONE";
+    std::string m_type = "NONE";
+    public:
+
+    Action();
+    Action(const std::string &name, const std::string &type);
+
+    std::string getName();
+    std::string getType();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------------------------------------- */
 class Game
 {
     sf::RenderWindow g_window;
@@ -37,7 +172,6 @@ class Game
     void spawnEnemy();
     void spawnBullet();
 
-
     void displayDevConsole(const std::vector<Entity *> &entities);
 
     // Textures declaration
@@ -51,8 +185,6 @@ public:
     Entity *player;
     Game()
     {
-        g_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
-        g_window.setFramerateLimit(60);
 
         // load textures
         playerTexture.set("player_idle.png");
@@ -148,8 +280,8 @@ void Game::SInput(Entity *player)
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::A)) && (player->ctransform->posX > 0))
     {
         player->ctransform->posX -= player->ctransform->speedX;
-        player->csprite->sprite.setScale(sf::Vector2f(-1*player->scale, player->scale));
-        player->csprite->sprite.setOrigin(player->w/player->scale, 0);
+        player->csprite->sprite.setScale(sf::Vector2f(-1 * player->scale, player->scale));
+        player->csprite->sprite.setOrigin(player->w / player->scale, 0);
     }
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::D)) && (player->ctransform->posX + player->w < WINDOW_WIDTH))
     {

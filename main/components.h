@@ -49,3 +49,9 @@ if (!texture.loadFromFile("assets/sprite/" + img_path))
 
     }
 };
+
+class CInput {
+public:
+
+
+};
