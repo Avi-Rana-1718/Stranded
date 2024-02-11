@@ -2,12 +2,12 @@
 #include <string>
 #include <iostream>
 
-#include "main/game.h"
+#include "main/gameEngine.h"
 
 int main()
 {
 
-    Game game;
+    GameEngine game;
     game.run();
 
     return 0;

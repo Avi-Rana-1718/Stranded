@@ -9,6 +9,7 @@ public:
 
     CTransform *ctransform = NULL;
     CSprite *csprite = NULL;
+    CText *ctext = NULL;
 
     int e_health;
 
@@ -18,7 +19,7 @@ public:
 
     bool controllable = false;
 
-    Entity(std::string t, int id, float width, float height, float px, float py, float sx, float sy, bool controll, sf::Texture &texture)
+    Entity(std::string t, int id, float width, float height, float px, float py, float sx, float sy, bool controll, sf::Texture &texture, sf::Font& font, std::string text)
     {
         tag = t;
         e_id = id;
@@ -32,6 +33,8 @@ public:
             ctransform = new CTransform(px, py, sx, sy, 0);
         }
         csprite = new CSprite(texture);
+
+        ctext = new CText(font, text);
 
         controllable = controll;
     }
@@ -49,13 +52,13 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, float sx, float sy, sf::Texture &texture, bool controllable = false)
+    Entity *addEntities(std::string tag, float sx, float sy, sf::Texture &texture, bool controllable, sf::Font &font, std::string text)
     {
 
         int px = (rand() % (1700 - 100) + 100);
         int py = (rand() % (600 - 100) + 100);
 
-        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, sx, sy, controllable, texture);
+        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, sx, sy, controllable, texture, font, text);
         m_entities.push_back(ptr);
         return ptr;
     }
@@ -73,7 +76,7 @@ public:
         }
     }
 
-    std::vector<Entity *> getEntities()
+    std::vector<Entity *>& getEntities()
     {
         return m_entities;
     }
