@@ -5,45 +5,75 @@ class Entity
 
 public:
     std::string tag;
+    int w, h;
+    float scale = 4.f;
+    int direction = 1;
+
     int e_id;
+    int e_health;
 
     CTransform *ctransform = NULL;
     CSprite *csprite = NULL;
     CText *ctext = NULL;
+    sf::RectangleShape *cshape = NULL;
+    
 
-    int e_health;
+    bool controllable;
+    bool collision;
+    bool stationary;
 
-    int w, h;
+    int currentFrame;
+    int animationDelay;
+    int animationTimer;
 
-    float scale=3.f;
-
-    bool controllable = false;
-
-    Entity(std::string t, int id, float width, float height, float px, float py, float sx, float sy, bool controll, sf::Texture &texture, sf::Font& font, std::string text)
+    Entity(std::string t, int id, float width, float height, float px, float py, sf::Texture &texture)
     {
         tag = t;
         e_id = id;
         e_health = 1;
 
-        w = width*scale;
-        h = height*scale;
+        w = width * scale;
+        h = height * scale;
 
-        if (px != 0 && py != 0 && sx != 0 && sy != 0)
-        {
-            ctransform = new CTransform(px, py, sx, sy, 0);
-        }
+        direction=1;
+
         csprite = new CSprite(texture);
+        csprite->setPosition(px, py);
+        csprite->setScale(sf::Vector2f(scale, scale));
+        csprite->setOrigin(sf::Vector2f(width/2, height/2));
 
-        ctext = new CText(font, text);
+        controllable=false;
+        collision=true;
+        stationary=true;
 
-        controllable = controll;
+        currentFrame=0;
+        animationDelay=5;
+        animationTimer=0;
     }
 
     ~Entity()
     {
         delete ctransform;
         delete csprite;
+        delete ctext;
     }
+
+    float getLeft() {
+        return csprite->getPosition().x - w/2;
+    }
+
+    float getRight() {
+        return csprite->getPosition().x + w/2;
+    }
+
+    float getTop() {
+        return csprite->getPosition().y - h/2;
+    }
+
+    float getBottom() {
+        return csprite->getPosition().y + h/2;
+    }
+
 };
 
 class EntityManager
@@ -52,13 +82,12 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, float sx, float sy, sf::Texture &texture, bool controllable, sf::Font &font, std::string text)
+    Entity *addEntities(std::string tag, sf::Texture &texture)
     {
+        int px = m_totalEntities * 300 + 100;
+        int py = std::rand() % (550 - 100 + 1) + 100;
 
-        int px = (rand() % (1700 - 100) + 100);
-        int py = (rand() % (600 - 100) + 100);
-
-        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, sx, sy, controllable, texture, font, text);
+        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, texture);
         m_entities.push_back(ptr);
         return ptr;
     }
@@ -76,7 +105,15 @@ public:
         }
     }
 
-    std::vector<Entity *>& getEntities()
+    void clearEntities()
+    {
+        for(auto entity : m_entities) {
+            delete entity;
+        }
+        m_entities.erase(m_entities.begin(), m_entities.end());
+    }
+
+    std::vector<Entity *> &getEntities()
     {
         return m_entities;
     }
