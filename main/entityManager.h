@@ -54,8 +54,8 @@ public:
         animationDelay = 7;
         animationTimer = 0;
 
-        isMoving=false;
-        isAttacking=false;
+        isMoving = false;
+        isAttacking = false;
     }
 
     ~Entity()
@@ -89,8 +89,11 @@ public:
     void sAnimate(std::map<std::string, std::vector<sf::Texture *>> textures, int frames)
     {
 
-        isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
-        isAttacking = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+        if (controllable)
+        {
+            isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
+            isAttacking = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+        }
 
         // direction
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))

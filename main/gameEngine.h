@@ -159,6 +159,13 @@ void Scenes_Play::init()
     player->controllable = true;
     player->animated = true;
 
+    //slime
+    Entity* slime = g_entities.addEntities("blueSlime", g_assets.m_textures["slime/blue/0.png"]);
+    slime->ctransform = new CTransform(1.f,1.f);
+    slime->csprite->setPosition(sf::Vector2f(0, 0));
+    slime->animated = true;
+    slime->stationary = false;
+
     // animation setup
     animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_1.png"]);
     animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_2.png"]);
@@ -169,6 +176,11 @@ void Scenes_Play::init()
     animationMap["wizard/attack"].push_back(&g_assets.m_textures["wizard/attack_3.png"]);
 
     animationMap["wizard/idle"].push_back(&g_assets.m_textures["wizard/idle.png"]);
+
+animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/1.png"]);
+animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/2.png"]);
+animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/3.png"]);
+    animationMap["blueSlime/idle"].push_back(&g_assets.m_textures["slime/blue/0.png"]);
 }
 
 void Scenes_Play::run()
@@ -205,7 +217,18 @@ void Scenes_Play::sMove(std::vector<Entity *> &entities)
     {
         if (entity->controllable == false && entity->stationary == false && entity->ctransform != NULL)
         {
-            entity->csprite->move(entity->ctransform->speedX, entity->ctransform->speedY);
+            entity->isMoving=true;
+            if(entity->csprite->getPosition().x  > player->csprite->getPosition().x) {
+            entity->csprite->move(-entity->ctransform->speedX, 0);
+            } else if(entity->csprite->getPosition().x < player->csprite->getPosition().x) {
+            entity->csprite->move(entity->ctransform->speedX, 0);
+            }
+
+                        if(entity->csprite->getPosition().y  > player->csprite->getPosition().y) {
+            entity->csprite->move(0, -entity->ctransform->speedY);
+            } else if(entity->csprite->getPosition().y < player->csprite->getPosition().y) {
+            entity->csprite->move(0, entity->ctransform->speedY);
+            }
         }
     }
 
