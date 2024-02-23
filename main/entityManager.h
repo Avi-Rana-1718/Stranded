@@ -16,15 +16,18 @@ public:
     CSprite *csprite = NULL;
     CText *ctext = NULL;
     sf::RectangleShape *cshape = NULL;
-    
 
     bool controllable;
     bool collision;
     bool stationary;
+    bool animated;
 
     int currentFrame;
     int animationDelay;
     int animationTimer;
+
+    bool isMoving;
+    bool isAttacking;
 
     Entity(std::string t, int id, float width, float height, float px, float py, sf::Texture &texture)
     {
@@ -35,20 +38,24 @@ public:
         w = width * scale;
         h = height * scale;
 
-        direction=1;
+        direction = 1;
 
         csprite = new CSprite(texture);
         csprite->setPosition(px, py);
         csprite->setScale(sf::Vector2f(scale, scale));
-        csprite->setOrigin(sf::Vector2f(width/2, height/2));
+        csprite->setOrigin(sf::Vector2f(width / 2, height / 2));
 
-        controllable=false;
-        collision=true;
-        stationary=true;
+        controllable = false;
+        collision = true;
+        stationary = true;
+        animated = false;
 
-        currentFrame=0;
-        animationDelay=5;
-        animationTimer=0;
+        currentFrame = 0;
+        animationDelay = 7;
+        animationTimer = 0;
+
+        isMoving=false;
+        isAttacking=false;
     }
 
     ~Entity()
@@ -56,24 +63,82 @@ public:
         delete ctransform;
         delete csprite;
         delete ctext;
+        delete cshape;
     }
 
-    float getLeft() {
-        return csprite->getPosition().x - w/2;
+    float getLeft()
+    {
+        return csprite->getPosition().x - w / 2;
     }
 
-    float getRight() {
-        return csprite->getPosition().x + w/2;
+    float getRight()
+    {
+        return csprite->getPosition().x + w / 2;
     }
 
-    float getTop() {
-        return csprite->getPosition().y - h/2;
+    float getTop()
+    {
+        return csprite->getPosition().y - h / 2;
     }
 
-    float getBottom() {
-        return csprite->getPosition().y + h/2;
+    float getBottom()
+    {
+        return csprite->getPosition().y + h / 2;
     }
 
+    void sAnimate(std::map<std::string, std::vector<sf::Texture *>> textures, int frames)
+    {
+
+        isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
+        isAttacking = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+        // direction
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            direction = -1;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            direction = 1;
+        }
+
+        csprite->setScale(sf::Vector2f(direction * scale, scale));
+
+        // move
+
+        std::string animationType;
+        if (isAttacking)
+        {
+            animationType = "attack";
+        }
+        else if (isMoving)
+        {
+            animationType = "move";
+        }
+        else
+        {
+            animationType = "idle";
+        }
+
+        if (animationType != "idle")
+        {
+            if (frames >= animationDelay + animationTimer)
+            {
+                csprite->setTexture(*textures[tag + "/" + animationType][currentFrame++]);
+                animationTimer = frames;
+
+                if (currentFrame == textures[tag + "/" + animationType].size())
+                {
+                    currentFrame = 0;
+                    animationTimer = frames + animationDelay;
+                }
+            }
+        }
+        else
+        {
+            csprite->setTexture(*textures[tag + "/" + animationType][0]);
+        }
+    }
 };
 
 class EntityManager
@@ -107,7 +172,8 @@ public:
 
     void clearEntities()
     {
-        for(auto entity : m_entities) {
+        for (auto entity : m_entities)
+        {
             delete entity;
         }
         m_entities.erase(m_entities.begin(), m_entities.end());

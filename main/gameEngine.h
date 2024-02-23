@@ -4,8 +4,8 @@
 
 // Constants
 
-#define WINDOW_WIDTH 1792
-#define WINDOW_HEIGHT 720
+const int WINDOW_WIDTH = 1792;
+const int WINDOW_HEIGHT = 720;
 
 #define WORLD_SX 4
 #define WORLD_SY 4
@@ -63,6 +63,9 @@ class Scenes
 {
 public:
     EntityManager g_entities;
+
+    Entity *cursor = NULL;
+
     virtual void init(){};
     virtual void run(){};
 
@@ -90,6 +93,12 @@ void Scenes::sRender(std::vector<Entity *> &entities)
         }
         g_window.draw(*(entity->csprite));
     }
+
+    if (cursor != NULL)
+    {
+        g_window.draw(*cursor->csprite);
+    }
+
     g_window.display();
 }
 
@@ -104,6 +113,7 @@ class Scenes_Play : public Scenes
 {
 public:
     Entity *player;
+    std::map<std::string, std::vector<sf::Texture *>> animationMap;
     void init();
     void run();
 
@@ -112,26 +122,53 @@ public:
     // Systems
     void sInput(Entity *player);
     void sMove(std::vector<Entity *> &entities);
-    void sAnimate(Entity *player);
+    void sAnimate(std::vector<Entity *> &entities);
 };
 
 void Scenes_Play::init()
 {
-    for (int i = 0; i < 10; i++)
+
+    cursor = new Entity("Cursor", -1, g_assets.m_textures["cursor.png"].getSize().x, g_assets.m_textures["cursor.png"].getSize().x, 300, 300, g_assets.m_textures["cursor.png"]);
+    cursor->csprite->setScale(sf::Vector2f(1.5, 1.5));
+
+    // background
+    for (int i = WINDOW_WIDTH / 2 - 16 * 4 * 7; i < WINDOW_WIDTH / 2 + 16 * 4 * 7; i += 16 * 4)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = WINDOW_HEIGHT / 2 - 16 * 4 * 5 + 50; j < WINDOW_HEIGHT / 2 + 16 * 4 * 5 - 50; j += 16 * 4)
         {
-            Entity *bg = g_entities.addEntities("Background", g_assets.m_textures["grass/0.png"]);
-            bg->csprite->setPosition(sf::Vector2f(100 + 16 * i * 4, 100 + (bg->h / 2) + 16 * 4 * j));
+            std::string id;
+
+            if (j >= WINDOW_HEIGHT / 2 + 16 * 4 * 4 - 50)
+            {
+                id = "4";
+            }
+            else
+            {
+                id = "0";
+            }
+
+            Entity *bg = g_entities.addEntities("Background", g_assets.m_textures["grass/" + id + ".png"]);
+            bg->csprite->setPosition(sf::Vector2f(i, j));
         }
     }
 
-    player = g_entities.addEntities("Player", g_assets.m_textures["wizard/idle.png"]);
-    player->ctransform = new CTransform;
-    player->ctransform->speedX = 7.f;
-    player->ctransform->speedY = 7.f;
+    // player
+    player = g_entities.addEntities("wizard", g_assets.m_textures["wizard/idle.png"]);
+    player->ctransform = new CTransform(5.f, 5.f);
     player->csprite->setPosition(sf::Vector2f(300, 300));
     player->controllable = true;
+    player->animated = true;
+
+    // animation setup
+    animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_1.png"]);
+    animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_2.png"]);
+    animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_3.png"]);
+
+    animationMap["wizard/attack"].push_back(&g_assets.m_textures["wizard/attack_1.png"]);
+    animationMap["wizard/attack"].push_back(&g_assets.m_textures["wizard/attack_2.png"]);
+    animationMap["wizard/attack"].push_back(&g_assets.m_textures["wizard/attack_3.png"]);
+
+    animationMap["wizard/idle"].push_back(&g_assets.m_textures["wizard/idle.png"]);
 }
 
 void Scenes_Play::run()
@@ -139,7 +176,7 @@ void Scenes_Play::run()
     sInput(player);
     sRender(g_entities.getEntities());
     sMove(g_entities.getEntities());
-    sAnimate(player);
+    sAnimate(g_entities.getEntities());
 }
 
 void Scenes_Play::sInput(Entity *player)
@@ -160,20 +197,6 @@ void Scenes_Play::sInput(Entity *player)
     {
         player->csprite->move(player->ctransform->speedX, 0);
     }
-
-    // melee
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    // {
-    //     std::vector<Entity *> entities = g_entities.getEntities();
-    //     for (auto entity : entities)
-    //     {
-    //         if (sword->csprite->getGlobalBounds().intersects(entity->csprite->getGlobalBounds()) && player->e_id != entity->e_id)
-    //         {
-    //             entity->csprite->move(sword->cweapons->forceX * (signbit(player->ctransform->speedX) ? -1 : 1), sword->cweapons->forceY * (signbit(player->ctransform->speedY) ? -1 : 1));
-    //             entity->csprite->setColor(sf::Color::Red);
-    //         }
-    //     }
-    // }
 }
 
 void Scenes_Play::sMove(std::vector<Entity *> &entities)
@@ -185,51 +208,21 @@ void Scenes_Play::sMove(std::vector<Entity *> &entities)
             entity->csprite->move(entity->ctransform->speedX, entity->ctransform->speedY);
         }
     }
+
+    cursor->csprite->setPosition(sf::Mouse::getPosition(g_window).x, sf::Mouse::getPosition(g_window).y);
 }
 
-void Scenes_Play::sAnimate(Entity *player)
+void Scenes_Play::sAnimate(std::vector<Entity *> &entities)
 {
 
-
-    bool isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
-    bool isAttacking = false;
-    
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        isAttacking=true;
-        player->csprite->setTexture(g_assets.m_textures["wizard/attack_1.png"]);
-    } else {
-        isAttacking=false;
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    for (auto entity : entities)
     {
-        player->direction = -1;
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    {
-        player->direction = 1;
-    }
-    player->csprite->setScale(sf::Vector2f(player->direction * player->scale, player->scale));
-
-    if (isMoving && frames >= player->animationTimer + player->animationDelay && player->currentFrame < 3 && !isAttacking)
-    {
-        player->currentFrame++;
-        player->csprite->setTexture(g_assets.m_textures["wizard/move_" + std::to_string(player->currentFrame) + ".png"]);
-        player->animationTimer = frames;
-
-        if (player->currentFrame == 3)
+        if (entity->animated)
         {
-            player->currentFrame = 0;
+            entity->sAnimate(animationMap, frames);
         }
     }
-    else if (!isMoving && !isAttacking)
-    {
-        player->currentFrame = 0;
-        player->csprite->setTexture(g_assets.m_textures["wizard/idle.png"]);
-        player->animationTimer = 0;
-    }
 }
-
 // GameEngine
 
 class GameEngine
@@ -254,15 +247,31 @@ GameEngine::GameEngine()
 
     g_window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bad FlappyBird");
     g_window.setFramerateLimit(60);
+    g_window.setMouseCursorVisible(false);
 
     // Load assets
+    g_assets.addTexture("cursor.png");
+
     g_assets.addTexture("grass/0.png");
+    g_assets.addTexture("grass/1.png");
+    g_assets.addTexture("grass/2.png");
+    g_assets.addTexture("grass/3.png");
+    g_assets.addTexture("grass/4.png");
+    g_assets.addTexture("grass/5.png");
 
     g_assets.addTexture("wizard/idle.png");
     g_assets.addTexture("wizard/move_1.png");
     g_assets.addTexture("wizard/move_2.png");
     g_assets.addTexture("wizard/move_3.png");
-        g_assets.addTexture("wizard/attack_1.png");
+
+    g_assets.addTexture("wizard/attack_1.png");
+    g_assets.addTexture("wizard/attack_2.png");
+    g_assets.addTexture("wizard/attack_3.png");
+
+    g_assets.addTexture("slime/blue/0.png");
+    g_assets.addTexture("slime/blue/1.png");
+    g_assets.addTexture("slime/blue/2.png");
+    g_assets.addTexture("slime/blue/3.png");
 
     // g_assets.addFont("noto.ttf");
 }

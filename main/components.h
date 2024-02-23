@@ -2,20 +2,17 @@ class CTransform
 {
 public:
     float speedX, speedY;
-    float angle; // angle refers to the rotation of the entity aka the way it is facing
 
     CTransform()
     {
         speedX = 1.0;
         speedY = 1.0;
-        angle = 1.0;
     }
 
-    CTransform(float sx, float sy, float a)
+    CTransform(float sx, float sy)
     {
         speedX = sx;
         speedY = sy;
-        angle = a;
     }
 };
 
