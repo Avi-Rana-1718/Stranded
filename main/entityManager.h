@@ -14,8 +14,7 @@ public:
 
     CTransform *ctransform = NULL;
     CSprite *csprite = NULL;
-    CText *ctext = NULL;
-    sf::RectangleShape *cshape = NULL;
+    CProjectile *cprojectile = NULL;
 
     bool controllable;
     bool collision;
@@ -25,6 +24,8 @@ public:
     int currentFrame;
     int animationDelay;
     int animationTimer;
+
+    bool isHostile;
 
     bool isMoving;
     bool isAttacking;
@@ -54,6 +55,8 @@ public:
         animationDelay = 7;
         animationTimer = 0;
 
+        isHostile = false;
+
         isMoving = false;
         isAttacking = false;
     }
@@ -62,8 +65,6 @@ public:
     {
         delete ctransform;
         delete csprite;
-        delete ctext;
-        delete cshape;
     }
 
     float getLeft()
@@ -89,10 +90,10 @@ public:
     void sAnimate(std::map<std::string, std::vector<sf::Texture *>> textures, int frames)
     {
 
-        if (controllable)
+        if (!controllable)
         {
-            isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
-            isAttacking = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+            // isMoving = (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D));
+            // isAttacking = sf::Mouse::isButtonPressed(sf::Mouse::Left);
         }
 
         // direction
@@ -134,12 +135,18 @@ public:
                 {
                     currentFrame = 0;
                     animationTimer = frames + animationDelay;
+
+                    if(isAttacking) {
+                        isAttacking=!isAttacking;
+                    }
                 }
             }
         }
         else
         {
             csprite->setTexture(*textures[tag + "/" + animationType][0]);
+            isAttacking = false;
+            isMoving = false;
         }
     }
 };

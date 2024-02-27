@@ -55,3 +55,14 @@ public:
         text.setFillColor(sf::Color::White);
     }
 };
+
+class CProjectile {
+public:
+    int health;
+    int lifespan;
+
+    CProjectile(int h, int l) {
+        health=h;
+        lifespan=l;
+    }
+};

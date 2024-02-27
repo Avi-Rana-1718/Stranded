@@ -1,4 +1,5 @@
 #include "entityManager.h"
+#include "assets.h"
 #include <math.h>
 #include <string>
 
@@ -6,50 +7,6 @@
 
 const int WINDOW_WIDTH = 1792;
 const int WINDOW_HEIGHT = 720;
-
-#define WORLD_SX 4
-#define WORLD_SY 4
-
-class Assets
-{
-public:
-    std::map<std::string, sf::Texture> m_textures;
-    std::map<std::string, sf::Font> m_fonts;
-    std::map<std::string, sf::SoundBuffer> m_sounds;
-
-    void addTexture(std::string path)
-    {
-        sf::Texture texture;
-        if (!texture.loadFromFile("assets/sprites/" + path))
-        {
-            std::cout << path << "not found";
-        }
-        m_textures[path] = texture;
-    }
-
-    void addFont(std::string path)
-    {
-
-        sf::Font font;
-        if (!font.loadFromFile("assets/" + path))
-        {
-            std::cout << path << "not found";
-        }
-        m_fonts[path] = font;
-    }
-    void addSound(std::string path)
-    {
-        sf::SoundBuffer buffer;
-        if (!buffer.loadFromFile("assets/audio/" + path))
-        {
-            std::cout << path << "not found";
-        }
-
-        m_sounds[path] = buffer;
-    }
-};
-
-//
 
 Assets g_assets;
 sf::RenderWindow g_window;
@@ -83,14 +40,6 @@ void Scenes::sRender(std::vector<Entity *> &entities)
     g_window.clear();
     for (auto entity : entities)
     {
-        if (entity->ctext != NULL)
-        {
-            g_window.draw(entity->ctext->text);
-        }
-        if (entity->cshape != NULL)
-        {
-            g_window.draw(*entity->cshape);
-        }
         g_window.draw(*(entity->csprite));
     }
 
@@ -123,6 +72,9 @@ public:
     void sInput(Entity *player);
     void sMove(std::vector<Entity *> &entities);
     void sAnimate(std::vector<Entity *> &entities);
+    void sAttack(Entity *player);
+
+    void sPhysics(std::vector<Entity *> &entities);
 };
 
 void Scenes_Play::init()
@@ -158,13 +110,15 @@ void Scenes_Play::init()
     player->csprite->setPosition(sf::Vector2f(300, 300));
     player->controllable = true;
     player->animated = true;
+    player->e_health = 3;
 
-    //slime
-    Entity* slime = g_entities.addEntities("blueSlime", g_assets.m_textures["slime/blue/0.png"]);
-    slime->ctransform = new CTransform(1.f,1.f);
+    // slime
+    Entity *slime = g_entities.addEntities("blueSlime", g_assets.m_textures["slime/blue/0.png"]);
+    slime->ctransform = new CTransform(1.f, 1.f);
     slime->csprite->setPosition(sf::Vector2f(0, 0));
     slime->animated = true;
     slime->stationary = false;
+    slime->isHostile = true;
 
     // animation setup
     animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_1.png"]);
@@ -177,9 +131,9 @@ void Scenes_Play::init()
 
     animationMap["wizard/idle"].push_back(&g_assets.m_textures["wizard/idle.png"]);
 
-animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/1.png"]);
-animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/2.png"]);
-animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/3.png"]);
+    animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/1.png"]);
+    animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/2.png"]);
+
     animationMap["blueSlime/idle"].push_back(&g_assets.m_textures["slime/blue/0.png"]);
 }
 
@@ -188,26 +142,39 @@ void Scenes_Play::run()
     sInput(player);
     sRender(g_entities.getEntities());
     sMove(g_entities.getEntities());
+    sAttack(player);
     sAnimate(g_entities.getEntities());
+    sPhysics(g_entities.getEntities());
 }
 
 void Scenes_Play::sInput(Entity *player)
 {
+    player->isMoving = false;
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && player->getTop() > 0)
     {
         player->csprite->move(0, -player->ctransform->speedY);
+        player->isMoving = true;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && player->getBottom() < WINDOW_HEIGHT)
     {
         player->csprite->move(0, player->ctransform->speedY);
+        player->isMoving = true;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && player->getLeft() > 0)
     {
         player->csprite->move(-player->ctransform->speedX, 0);
+        player->isMoving = true;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && player->getRight() < WINDOW_WIDTH)
     {
         player->csprite->move(player->ctransform->speedX, 0);
+        player->isMoving = true;
+    }
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && frames >= player->animationTimer + 15)
+    {
+        player->isAttacking = true;
     }
 }
 
@@ -215,19 +182,25 @@ void Scenes_Play::sMove(std::vector<Entity *> &entities)
 {
     for (auto entity : entities)
     {
-        if (entity->controllable == false && entity->stationary == false && entity->ctransform != NULL)
+        if (entity->controllable == false && entity->stationary == false && entity->ctransform != NULL && entity->isHostile)
         {
-            entity->isMoving=true;
-            if(entity->csprite->getPosition().x  > player->csprite->getPosition().x) {
-            entity->csprite->move(-entity->ctransform->speedX, 0);
-            } else if(entity->csprite->getPosition().x < player->csprite->getPosition().x) {
-            entity->csprite->move(entity->ctransform->speedX, 0);
+            entity->isMoving = true;
+            if (entity->csprite->getPosition().x > player->csprite->getPosition().x)
+            {
+                entity->csprite->move(-entity->ctransform->speedX, 0);
+            }
+            else if (entity->csprite->getPosition().x < player->csprite->getPosition().x)
+            {
+                entity->csprite->move(entity->ctransform->speedX, 0);
             }
 
-                        if(entity->csprite->getPosition().y  > player->csprite->getPosition().y) {
-            entity->csprite->move(0, -entity->ctransform->speedY);
-            } else if(entity->csprite->getPosition().y < player->csprite->getPosition().y) {
-            entity->csprite->move(0, entity->ctransform->speedY);
+            if (entity->csprite->getPosition().y > player->csprite->getPosition().y)
+            {
+                entity->csprite->move(0, -entity->ctransform->speedY);
+            }
+            else if (entity->csprite->getPosition().y < player->csprite->getPosition().y)
+            {
+                entity->csprite->move(0, entity->ctransform->speedY);
             }
         }
     }
@@ -246,6 +219,58 @@ void Scenes_Play::sAnimate(std::vector<Entity *> &entities)
         }
     }
 }
+
+void Scenes_Play::sAttack(Entity *player)
+{
+    if (player->isAttacking && frames >= player->animationTimer + 15)
+    {
+        std::cout << g_entities.m_totalEntities << std::endl;
+
+        Entity *b = g_entities.addEntities("shoot", g_assets.m_textures["projectile/blue.png"]);
+        b->cprojectile = new CProjectile(1, 255);
+        float dx = sf::Mouse::getPosition(g_window).x - player->csprite->getPosition().x;
+        float dy = sf::Mouse::getPosition(g_window).y - player->csprite->getPosition().y;
+
+        float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
+
+        b->csprite->setPosition(player->csprite->getPosition().x, player->csprite->getPosition().y);
+        b->ctransform = new CTransform(dx / l * 3, dy / l * 3);
+        b->stationary = false;
+    }
+}
+
+void Scenes_Play::sPhysics(std::vector<Entity *> &entities)
+{
+
+    // projectiles
+
+    for (auto entity : entities)
+    {
+        if (entity->cprojectile != NULL)
+        {
+            if (entity->cprojectile->lifespan > 0)
+            {
+                entity->csprite->move(entity->ctransform->speedX, entity->ctransform->speedY);
+                entity->cprojectile->lifespan--;
+            }
+            else
+            {
+                g_entities.removeEntity(entity->e_id);
+            }
+        }
+
+        // collide
+        for (int i = 0; i < entities.size(); i++)
+        {
+            if (entity->csprite->getGlobalBounds().intersects(entities[i]->csprite->getGlobalBounds()) && entity->e_id != entities[i]->e_id && (entity->tag != player->tag && entities[i]->tag != player->tag))
+            {
+                g_entities.removeEntity(entity->e_id);
+                g_entities.removeEntity(entities[i]->e_id);
+            }
+        }
+    }
+}
+
 // GameEngine
 
 class GameEngine
@@ -296,6 +321,7 @@ GameEngine::GameEngine()
     g_assets.addTexture("slime/blue/2.png");
     g_assets.addTexture("slime/blue/3.png");
 
+    g_assets.addTexture("projectile/blue.png");
     // g_assets.addFont("noto.ttf");
 }
 
@@ -310,7 +336,6 @@ void GameEngine::run()
             g_window.create(fullscreenModes[0], "Bad FlappyBird");
         }
 
-        currentScene->run();
         while (g_window.pollEvent(events))
         {
             if (events.type == sf::Event::Closed)
@@ -319,6 +344,8 @@ void GameEngine::run()
                 is_running = false;
             }
         }
+
+        currentScene->run();
 
         frames++;
     }
