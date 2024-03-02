@@ -11,6 +11,7 @@ public:
 
     int e_id;
     int e_health;
+    int layer;
 
     CTransform *ctransform = NULL;
     CSprite *csprite = NULL;
@@ -27,14 +28,17 @@ public:
 
     bool isHostile;
 
+    //states
     bool isMoving;
     bool isAttacking;
+    bool isHurt;
 
-    Entity(std::string t, int id, float width, float height, float px, float py, sf::Texture &texture)
+    Entity(std::string t, int id, float width, float height, float px, float py, sf::Texture &texture, int l)
     {
         tag = t;
         e_id = id;
         e_health = 1;
+        layer = l;
 
         w = width * scale;
         h = height * scale;
@@ -59,6 +63,7 @@ public:
 
         isMoving = false;
         isAttacking = false;
+        isHurt = false;
     }
 
     ~Entity()
@@ -109,9 +114,10 @@ public:
         csprite->setScale(sf::Vector2f(direction * scale, scale));
 
         // move
-
         std::string animationType;
-        if (isAttacking)
+        if(isHurt) {
+            animationType= "hurt";
+        }else if (isAttacking)
         {
             animationType = "attack";
         }
@@ -136,8 +142,12 @@ public:
                     currentFrame = 0;
                     animationTimer = frames + animationDelay;
 
-                    if(isAttacking) {
-                        isAttacking=!isAttacking;
+                    if (isAttacking)
+                    {
+                        isAttacking = !isAttacking;
+                    }
+                    if(isHurt) {
+                        isHurt = !isHurt;
                     }
                 }
             }
@@ -157,12 +167,12 @@ public:
     std::vector<Entity *> m_entities;
     int m_totalEntities = 0;
 
-    Entity *addEntities(std::string tag, sf::Texture &texture)
+    Entity *addEntities(std::string tag, sf::Texture &texture, int l = 1)
     {
         int px = m_totalEntities * 300 + 100;
         int py = std::rand() % (550 - 100 + 1) + 100;
 
-        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, texture);
+        Entity *ptr = new Entity(tag, m_totalEntities++, texture.getSize().x, texture.getSize().y, px, py, texture, l);
         m_entities.push_back(ptr);
         return ptr;
     }

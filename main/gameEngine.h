@@ -80,7 +80,7 @@ public:
 void Scenes_Play::init()
 {
 
-    cursor = new Entity("Cursor", -1, g_assets.m_textures["cursor.png"].getSize().x, g_assets.m_textures["cursor.png"].getSize().x, 300, 300, g_assets.m_textures["cursor.png"]);
+    cursor = new Entity("Cursor", -1, g_assets.m_textures["cursor.png"].getSize().x, g_assets.m_textures["cursor.png"].getSize().x, 300, 300, g_assets.m_textures["cursor.png"], 3);
     cursor->csprite->setScale(sf::Vector2f(1.5, 1.5));
 
     // background
@@ -99,26 +99,30 @@ void Scenes_Play::init()
                 id = "0";
             }
 
-            Entity *bg = g_entities.addEntities("Background", g_assets.m_textures["grass/" + id + ".png"]);
+            Entity *bg = g_entities.addEntities("Background", g_assets.m_textures["grass/" + id + ".png"], 0);
             bg->csprite->setPosition(sf::Vector2f(i, j));
         }
     }
 
     // player
     player = g_entities.addEntities("wizard", g_assets.m_textures["wizard/idle.png"]);
-    player->ctransform = new CTransform(5.f, 5.f);
+    player->ctransform = new CTransform(5.5, 5.5);
     player->csprite->setPosition(sf::Vector2f(300, 300));
     player->controllable = true;
     player->animated = true;
     player->e_health = 3;
 
     // slime
-    Entity *slime = g_entities.addEntities("blueSlime", g_assets.m_textures["slime/blue/0.png"]);
-    slime->ctransform = new CTransform(1.f, 1.f);
-    slime->csprite->setPosition(sf::Vector2f(0, 0));
-    slime->animated = true;
-    slime->stationary = false;
-    slime->isHostile = true;
+    for (int i = 0; i < 5; i++)
+    {
+        Entity *slime = g_entities.addEntities("blueSlime", g_assets.m_textures["slime/blue/0.png"]);
+        slime->ctransform = new CTransform(1.2f, 1.2f);
+        slime->csprite->setPosition(sf::Vector2f(std::rand() % (1500 - 100 + 1) + 100, std::rand() % (700 - 100 + 1) + 100));
+        slime->e_health=5;
+        slime->animated = true;
+        slime->stationary = false;
+        slime->isHostile = true;
+    }
 
     // animation setup
     animationMap["wizard/move"].push_back(&g_assets.m_textures["wizard/move_1.png"]);
@@ -133,6 +137,8 @@ void Scenes_Play::init()
 
     animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/1.png"]);
     animationMap["blueSlime/move"].push_back(&g_assets.m_textures["slime/blue/2.png"]);
+        animationMap["blueSlime/hurt"].push_back(&g_assets.m_textures["slime/blue/3.png"]);
+            animationMap["blueSlime/hurt"].push_back(&g_assets.m_textures["slime/blue/4.png"]);
 
     animationMap["blueSlime/idle"].push_back(&g_assets.m_textures["slime/blue/0.png"]);
 }
@@ -234,7 +240,7 @@ void Scenes_Play::sAttack(Entity *player)
         float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
 
         b->csprite->setPosition(player->csprite->getPosition().x, player->csprite->getPosition().y);
-        b->ctransform = new CTransform(dx / l * 3, dy / l * 3);
+        b->ctransform = new CTransform(dx / l * 5, dy / l * 5);
         b->stationary = false;
     }
 }
@@ -262,11 +268,21 @@ void Scenes_Play::sPhysics(std::vector<Entity *> &entities)
         // collide
         for (int i = 0; i < entities.size(); i++)
         {
-            if (entity->csprite->getGlobalBounds().intersects(entities[i]->csprite->getGlobalBounds()) && entity->e_id != entities[i]->e_id && (entity->tag != player->tag && entities[i]->tag != player->tag))
+            if (entity->csprite->getGlobalBounds().intersects(entities[i]->csprite->getGlobalBounds()) && entity->e_id != entities[i]->e_id && (entity->tag != player->tag && entities[i]->tag != player->tag) && entity->layer == entities[i]->layer && entity->tag != entities[i]->tag)
             {
-                g_entities.removeEntity(entity->e_id);
-                g_entities.removeEntity(entities[i]->e_id);
+                entity->e_health--;
+                entities[i]->e_health--;
+                if(entity->cprojectile==NULL) {
+                    entity->isHurt=true;
+                }  else {
+                    entities[i]->isHurt=true;
+                }
             }
+        }
+
+
+        if(entity->e_health<=0) {
+            g_entities.removeEntity(entity->e_id);
         }
     }
 }
@@ -288,6 +304,13 @@ GameEngine::GameEngine()
 {
     is_running = true;
     frames = 0;
+
+    sf::View view(sf::FloatRect(0.1f, 0.1f, 100.f, 60.f));
+    view.rotate(5.f);
+    view.setCenter(0, 0);
+    view.setViewport(sf::FloatRect(0.25f, 0.25, 0.5f, 0.5f));
+
+    g_window.setView(view);
 
     changeScene(new Scenes_Play);
 
@@ -320,9 +343,12 @@ GameEngine::GameEngine()
     g_assets.addTexture("slime/blue/1.png");
     g_assets.addTexture("slime/blue/2.png");
     g_assets.addTexture("slime/blue/3.png");
+    g_assets.addTexture("slime/blue/4.png");
+
 
     g_assets.addTexture("projectile/blue.png");
-    // g_assets.addFont("noto.ttf");
+
+    g_assets.addFont("noto.ttf");
 }
 
 void GameEngine::run()
@@ -330,6 +356,7 @@ void GameEngine::run()
     currentScene->init();
     while (is_running)
     {
+        std::cout << frames / 60 << std::endl;
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
