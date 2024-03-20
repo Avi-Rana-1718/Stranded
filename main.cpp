@@ -5,7 +5,7 @@
 #include <iostream>
 #include <math.h>
 
-#include "main/gameEngine.h"
+#include "main/gameEngine.hpp"
 
 int main()
 {
