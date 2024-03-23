@@ -54,14 +54,14 @@ void Slime::update(float time)
 
 void Slime::sMove()
 {
-    if(actionTag!="hurt") {
-    actionTag="move";
+
+    actionTag=((actionTag!="attack")||(actionTag!="hurt"))?"move":"hurt";
     float dx = target->sprite->getPosition().x - sprite->getPosition().x;
     float dy = target->sprite->getPosition().y - sprite->getPosition().y;
     float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
 
     sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
-    }
+    
 }
 
 void Slime::sAttack()

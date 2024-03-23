@@ -62,23 +62,23 @@ void Player::sInput()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         sprite->move(0, -transform->speedY * deltaTime);
-        actionTag="move";
+        actionTag=(actionTag!="attack")?"move":"attack";
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
         sprite->move(0, transform->speedY * deltaTime);
-        actionTag="move";
+        actionTag=(actionTag!="attack")?"move":"attack";
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         sprite->move(-transform->speedX * deltaTime, 0);
-        actionTag="move";
+        actionTag=(actionTag!="attack")?"move":"attack";
         direction = -1;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         sprite->move(transform->speedX * deltaTime, 0);
-        actionTag="move";
+        actionTag=(actionTag!="attack")?"move":"attack";
         direction = 1;
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1)
