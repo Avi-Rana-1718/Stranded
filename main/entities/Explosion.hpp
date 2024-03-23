@@ -23,7 +23,7 @@ Explosion::Explosion(float originX, float originY, float targetX, float targetY,
     dmg = 2;
     projectileHealth = 1;
     // projectileDuration=5;
-    knockback=100;
+    // knockback=;
 
     frameDelay = 0.4;
     animationTimer = 0;
@@ -77,9 +77,13 @@ void Explosion::Collide()
     {
         if (entities[i]->sprite->getGlobalBounds().intersects(this->sprite->getGlobalBounds()) && entities[i] != this && entities[i]->tag != this->tag && entities[i]->id != ownerID && entities[i]->isProjectile == false && entities[i]->layer==this->layer)
         {
-            entities[i]->isTakingDmg = true;
-            entities[i]->health -= dmg;
-            // entities[i]->sprite->move(this->transform->speedX*deltaTime*knockback, this->transform->speedX*deltaTime*knockback);
+            entities[i]->hurt(dmg);
+
+            float offsetX = (std::rand()) / 1000 * 10 * 10;
+            float offsetY = (std::rand()) / 1000 * 10 * 10;
+
+
+            view.setCenter(view.getCenter() + sf::Vector2f(offsetX, offsetY));
 
             entities[i]->text = new sf::Text;
             entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
@@ -89,10 +93,6 @@ void Explosion::Collide()
             entities[i]->text->setFillColor(sf::Color::Red);
 
             this->projectileHealth--;
-        }
-        else
-        {
-            entities[i]->isTakingDmg = false;
         }
 
         // del

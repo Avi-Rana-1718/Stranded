@@ -19,7 +19,7 @@ public:
 RedSkelWiz::RedSkelWiz()
 {
     hatesPlayer = true;
-    target=entities[0];
+    target = entities[0];
 
     tag = "RedSkelWiz";
     health = 10;
@@ -28,7 +28,7 @@ RedSkelWiz::RedSkelWiz()
     animationTimer = 0;
     currentFrame = 0;
 
-    lastActionFrame = 0;
+    lastActionFrame = gameTime.getElapsedTime().asSeconds();
 
     //
     animationMap["idle"].push_back(m_textures["redSkeletonWizard/idle0.png"]);
@@ -47,7 +47,7 @@ RedSkelWiz::RedSkelWiz()
     sprite = new CSprite(m_textures["redSkeletonWizard/idle0.png"]);
     sprite->setOrigin(m_textures["redSkeletonWizard/idle0.png"].getSize().x / 2, m_textures["redSkeletonWizard/idle0.png"].getSize().y / 2);
     sprite->setPosition(sf::Vector2f((rand() % 1000 - 100) + 100, (rand() % 500 - 100) + 100));
-    transform = new CTransform(100, 100);
+    transform = new CTransform(150, 150);
 
     scale = 3.5;
     isMoving = false;
@@ -82,11 +82,13 @@ void RedSkelWiz::sMove()
 
 void RedSkelWiz::sAttack()
 {
-    // sf::RectangleShape bounds = this->sprite->getGlobalBounds();
-    // bounds.setSize(sf::Vector2f(bounds.getSize().x+100, bounds.getSize().y+100));
+    // range of sight/detection
+    sf::FloatRect bounds = this->sprite->getGlobalBounds();
+    sf::RectangleShape rec(sf::Vector2f(bounds.getSize().x + 600, bounds.getSize().y + 600));
+    rec.setOrigin(sf::Vector2f(rec.getSize().x / 2, rec.getSize().y / 2));
+    rec.setPosition(this->sprite->getPosition().x, this->sprite->getPosition().y);
 
-
-    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1)
+    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && rec.getGlobalBounds().intersects(target->sprite->getGlobalBounds()))
     {
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         Entity *projectile = new Explosion(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);

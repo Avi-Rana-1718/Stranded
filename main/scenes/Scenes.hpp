@@ -18,9 +18,7 @@ public:
 };
 
 Scenes::Scenes()
-{
-    std::cout << "Scenes base constructor" << std::endl;
-}
+{}
 
 Scenes::~Scenes()
 {
@@ -28,9 +26,9 @@ Scenes::~Scenes()
 
 void Scenes::run(float time)
 {
-    deltaTime = time;
-    sRender();
-    sEntityUpdate();
+    // deltaTime = time;
+    // sRender();
+    // sEntityUpdate();
 }
 
 void Scenes::sRender()
@@ -59,13 +57,13 @@ void Scenes::sRender()
 
         entity->sprite->setScale(sf::Vector2f(entity->direction * entity->scale, entity->scale));
 
-        // sf::FloatRect bounds = entity->sprite->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Red);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
+        sf::FloatRect bounds = entity->sprite->getGlobalBounds();
+        sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
+        boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
+        boundsRect.setFillColor(sf::Color::Transparent);
+        boundsRect.setOutlineColor(sf::Color::Red);
+        boundsRect.setOutlineThickness(2.f);
+        window.draw(boundsRect);
     }
 
     // std::cout<<std::endl;

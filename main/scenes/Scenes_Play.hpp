@@ -82,8 +82,8 @@ void Scene_Play::sSpawnWaves()
     else
     {
         entities.push_back(new Slime);
-        entities.push_back(new BlueSkelWiz);
-        entities.push_back(new RedSkelWiz);
+        // entities.push_back(new BlueSkelWiz);
+        // entities.push_back(new RedSkelWiz);
     }
 
     // std::cout << entities.size() << std::endl;

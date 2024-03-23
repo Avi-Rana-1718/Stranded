@@ -41,35 +41,35 @@ Slime::Slime()
 
     scale = 3;
 
-    isMoving = false;
+    actionTag="move";
 }
 
 void Slime::update(float time)
 {
     deltaTime = time;
-    sMove();
     sAnimate();
     sAttack();
+    sMove();
 }
 
 void Slime::sMove()
 {
-    isMoving = true;
+    if(actionTag!="hurt") {
+    actionTag="move";
     float dx = target->sprite->getPosition().x - sprite->getPosition().x;
     float dy = target->sprite->getPosition().y - sprite->getPosition().y;
-
     float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
 
     sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
+    }
 }
 
 void Slime::sAttack()
 {
     if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()))
     {
+        actionTag="attack";
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
-        isAttacking = true;
-        target->isTakingDmg = true;
-        target->health -= attackDmg;
+        target->hurt(attackDmg);
     }
 }

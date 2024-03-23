@@ -11,7 +11,7 @@ class GameEngine
 
 public:
     sf::Event event;
-
+    
     Scenes *currentScene = NULL;
     AssetManager assets;
 
@@ -82,6 +82,9 @@ GameEngine::GameEngine()
     assets.addTexture("slime/large/hit.png");
     assets.addTexture("slime/large/die.png");
 
+    assets.addTexture("interactables/bronzeVase/idle.png");
+    assets.addTexture("interactables/bronzeVase/hit.png");
+
     assets.addTexture("ui/heart.png");
     assets.addTexture("map.png");
 
@@ -92,6 +95,10 @@ GameEngine::GameEngine()
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
+
+    view.setCenter(sf::Vector2f(WINDOW_W / 2, WINDOW_H / 2));
+    view.setSize(sf::Vector2f(WINDOW_W, WINDOW_H));
+    window.setView(view);
 }
 
 void GameEngine::run()

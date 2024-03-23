@@ -21,7 +21,7 @@ public:
 
     int health;
 
-    int lastActionFrame;
+    float lastActionFrame;
     float scale;
 
     CSprite *sprite = NULL;
@@ -29,6 +29,7 @@ public:
     sf::Text *text = NULL;
 
     float deltaTime;
+    std::string actionTag;
 
     // functions
     Entity();
@@ -36,6 +37,8 @@ public:
 
     virtual void update(float time);
     virtual void sAnimate();
+
+    virtual void hurt(int dmg);
 };
 
 Entity::Entity()
@@ -45,6 +48,7 @@ Entity::Entity()
 
     direction = 1;
     health = 1;
+    actionTag="idle";
 }
 Entity::~Entity()
 {
@@ -59,34 +63,6 @@ void Entity::update(float time)
 
 void Entity::sAnimate()
 {
-    std::string actionTag;
-
-    if (isDead)
-    {
-        actionTag = "die";
-    }
-    else if (isTakingDmg)
-    {
-        actionTag = "hurt";
-    }
-    else if (isAttacking)
-    {
-        actionTag = "attack";
-    }
-    else if (isMoving)
-    {
-        actionTag = "move";
-    }
-    else
-    {
-        actionTag = "idle";
-    }
-
-    if (isProjectile)
-    {
-        actionTag = "explode";
-    }
-
     if (currentFrame < animationMap[actionTag].size() && gameTime.getElapsedTime().asSeconds() > animationTimer + frameDelay)
     {
         sprite->setTexture(animationMap[actionTag][currentFrame++]);
@@ -94,18 +70,23 @@ void Entity::sAnimate()
     }
     else if (currentFrame == animationMap[actionTag].size())
     {
-        // animationTimer = gameTime.getElapsedTime().asSeconds();
+        // if(isTakingDmg)
+        animationTimer=gameTime.getElapsedTime().asSeconds()+frameDelay;
 
-        if (isTakingDmg)
-        {
-            delete text;
-            text = NULL;
-        }
+        // if (isTakingDmg)
+        // {
+        //     delete text;
+        //     text = NULL;
+        // }
 
-        if (!isProjectile)
+        
             currentFrame = 0;
+            actionTag="move";
 
-        isAttacking = false;
-        isTakingDmg = false;
     }
+}
+
+void Entity::hurt(int dmg) {
+    health-=dmg;
+    actionTag="hurt";
 }

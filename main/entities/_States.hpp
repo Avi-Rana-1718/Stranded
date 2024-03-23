@@ -3,6 +3,8 @@ class States {
     public:
 
     States();
+
+    void resetState();
     
     bool isMoving;
     bool isAttacking;

@@ -47,6 +47,7 @@ Player::Player()
     scale = 4;
 
     transform = new CTransform(500.f, 500.f);
+    actionTag="idle";
 }
 
 void Player::update(float time)
@@ -58,27 +59,26 @@ void Player::update(float time)
 
 void Player::sInput()
 {
-    isMoving = false;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
         sprite->move(0, -transform->speedY * deltaTime);
-        isMoving = true;
+        actionTag="move";
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
         sprite->move(0, transform->speedY * deltaTime);
-        isMoving = true;
+        actionTag="move";
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         sprite->move(-transform->speedX * deltaTime, 0);
-        isMoving = true;
+        actionTag="move";
         direction = -1;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         sprite->move(transform->speedX * deltaTime, 0);
-        isMoving = true;
+        actionTag="move";
         direction = 1;
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1)
@@ -86,6 +86,6 @@ void Player::sInput()
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         Entity *projectile = new Explosion(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id);
         entities.push_back(projectile);
-        isAttacking = true;
+        actionTag="attack";
     }
 }

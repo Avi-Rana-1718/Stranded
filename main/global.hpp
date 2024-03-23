@@ -1,6 +1,7 @@
 #pragma once
 class GameEngine;
 sf::RenderWindow window;
+sf::View view;
 sf::Clock Clock;
 sf::Clock gameTime;
 
