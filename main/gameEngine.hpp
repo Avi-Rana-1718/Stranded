@@ -1,18 +1,19 @@
 #include "global.hpp"
+#include "particles.hpp"
 #include "scenes/Scenes.hpp"
 
 #include "scenes/Scenes_Play.hpp"
+#include "scenes/Scenes_Menu.hpp"
+
 
 class GameEngine
 {
 
     bool isRunning;
-    int totalFrames;
 
 public:
     sf::Event event;
     
-    Scenes *currentScene = NULL;
     AssetManager assets;
 
     GameEngine();
@@ -85,12 +86,21 @@ GameEngine::GameEngine()
     assets.addTexture("interactables/bronzeVase/idle.png");
     assets.addTexture("interactables/bronzeVase/hit.png");
 
+    assets.addTexture("ui/hp.png");
+    assets.addTexture("ui/mp.png");
+
     assets.addTexture("ui/heart.png");
+    assets.addTexture("ui/empty_heart.png");
+    
+    assets.addTexture("ui/mana.png");
+    assets.addTexture("ui/empty_mana.png");
+
     assets.addTexture("map.png");
+    assets.addTexture("ui/bar_blue_mid.png");
 
     assets.addFont("noto.ttf");
 
-    currentScene = new Scene_Play;
+    currentScene = new Scene_Menu;
     window.create(sf::VideoMode(WINDOW_W, WINDOW_H), "Dice wizard");
     window.setFramerateLimit(144);
     isRunning = true;
@@ -108,6 +118,7 @@ void GameEngine::run()
     {
 
         sf::Time time = Clock.restart();
+        totalFrames++;
 
         while (window.pollEvent(event))
         {

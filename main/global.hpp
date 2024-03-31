@@ -5,6 +5,8 @@ sf::View view;
 sf::Clock Clock;
 sf::Clock gameTime;
 
+int totalFrames;
+
 int WINDOW_W=1800;
 int WINDOW_H=720;
 
@@ -12,3 +14,7 @@ int WINDOW_H=720;
 
 std::vector<Entity *> entities;
 std::vector<Entity *> ui;
+
+#include "scenes/Scenes.hpp"
+
+Scenes *currentScene = NULL;

@@ -16,7 +16,7 @@ public:
 Slime::Slime()
 {
     hatesPlayer = true;
-    target=entities[0];
+    target = entities[0];
 
     tag = "Slime";
     health = 3;
@@ -41,7 +41,7 @@ Slime::Slime()
 
     scale = 3;
 
-    actionTag="move";
+    actionTag = "move";
 }
 
 void Slime::update(float time)
@@ -55,20 +55,23 @@ void Slime::update(float time)
 void Slime::sMove()
 {
 
-    actionTag=((actionTag!="attack")||(actionTag!="hurt"))?"move":"hurt";
+    if (actionTag != "die" && actionTag != "hurt" && actionTag != "attack")
+    {
+        actionTag = "move";
+    }
     float dx = target->sprite->getPosition().x - sprite->getPosition().x;
     float dy = target->sprite->getPosition().y - sprite->getPosition().y;
     float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
 
     sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
-    
 }
 
 void Slime::sAttack()
 {
-    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()))
+
+    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()) && actionTag != "hurt" && actionTag != "die")
     {
-        actionTag="attack";
+        actionTag = "attack";
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         target->hurt(attackDmg);
     }

@@ -50,7 +50,7 @@ BlueSkelWiz::BlueSkelWiz()
     transform = new CTransform(150, 150);
 
     scale = 3.5;
-    isMoving = false;
+    actionTag="idle";
 }
 
 void BlueSkelWiz::update(float time)
@@ -60,24 +60,24 @@ void BlueSkelWiz::update(float time)
     sAttack();
     sAnimate();
 
-    if (health <= 0)
-    {
-        isDead = true;
-        for (int i = 0; i < entities.size(); i++)
-        {
-            if (this->id == entities[i]->id)
-            {
-                entities.erase(entities.begin() + i);
-                break;
-            }
-        }
-        delete this;
-    }
+    // if (health <= 0)
+    // {
+    //     actionTag="die";
+    //     for (int i = 0; i < entities.size(); i++)
+    //     {
+    //         if (this->id == entities[i]->id)
+    //         {
+    //             entities.erase(entities.begin() + i);
+    //             break;
+    //         }
+    //     }
+    //     delete this;
+    // }
 }
 
 void BlueSkelWiz::sMove()
 {
-    isMoving = true;
+    actionTag="move";
     float dx = target->sprite->getPosition().x - sprite->getPosition().x;
     float dy = target->sprite->getPosition().y - sprite->getPosition().y;
 
@@ -107,6 +107,6 @@ void BlueSkelWiz::sAttack()
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         Entity *projectile = new Explosion(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);
         entities.push_back(projectile);
-        isAttacking = true;
+        actionTag="attack";
     }
 }

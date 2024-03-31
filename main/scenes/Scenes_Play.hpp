@@ -6,15 +6,19 @@
 
 #include "../entities/bg/map.hpp"
 #include "../entities/ui/heart.hpp"
-
+#include "../entities/ui/hp.hpp"
+#include "../entities/ui/mana.hpp"
+#include "../entities/ui/mp.hpp"
 #pragma once
 class Scene_Play : public Scenes
 {
 public:
-    Entity *player, *hp;
+    Entity *player;
+    std::vector<Heart *> hearts;
+    std::vector<Mana *> mana;
 
     int wave;
-    
+
     //
 
     Scene_Play();
@@ -28,19 +32,41 @@ public:
 
 Scene_Play::Scene_Play()
 {
+
     wave = 0;
 
     player = new Player;
     entities.push_back(player);
+    ui.push_back(new HP);
+    ui.push_back(new MP);
 
-    hp = new Heart;
-    hp->text = new sf::Text();
-    hp->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
-    hp->text->setString(std::to_string(player->health));
-    hp->text->setPosition(m_textures["ui/heart.png"].getSize().x * 2, 720 - m_textures["ui/heart.png"].getSize().y * 2 - 24);
-    hp->text->setCharacterSize(24); // in pixels, not points!
-    hp->text->setFillColor(sf::Color::White);
-    ui.push_back(hp);
+
+    hearts.push_back(new Heart);
+    hearts[0]->sprite->setPosition(sf::Vector2f(m_textures["ui/hp.png"].getSize().x * 4, 0));
+    ui.push_back(hearts[0]);
+    hearts.push_back(new Heart);
+    hearts[1]->sprite->setPosition(sf::Vector2f(m_textures["ui/hp.png"].getSize().x * 4 + m_textures["ui/heart.png"].getSize().x * 4, 0));
+    ui.push_back(hearts[1]);
+    hearts.push_back(new Heart);
+    hearts[2]->sprite->setPosition(sf::Vector2f(m_textures["ui/hp.png"].getSize().x * 4 + m_textures["ui/heart.png"].getSize().x * 2 * 4, 0));
+    ui.push_back(hearts[2]);
+    hearts.push_back(new Heart);
+    hearts[3]->sprite->setPosition(sf::Vector2f(m_textures["ui/hp.png"].getSize().x * 4 + m_textures["ui/heart.png"].getSize().x * 3 * 4, 0));
+    ui.push_back(hearts[3]);
+
+    mana.push_back(new Mana);
+    mana[0]->sprite->setPosition(sf::Vector2f(m_textures["ui/mp.png"].getSize().x * 4, m_textures["ui/hp.png"].getSize().y*4));
+    ui.push_back(mana[0]);
+    mana.push_back(new Mana);
+    mana[1]->sprite->setPosition(sf::Vector2f(m_textures["ui/mp.png"].getSize().x * 4 + m_textures["ui/mana.png"].getSize().x * 4, m_textures["ui/hp.png"].getSize().y*4));
+    ui.push_back(mana[1]);
+    mana.push_back(new Mana);
+    mana[2]->sprite->setPosition(sf::Vector2f(m_textures["ui/mp.png"].getSize().x * 4 + m_textures["ui/mana.png"].getSize().x * 2 * 4, m_textures["ui/hp.png"].getSize().y*4));
+    ui.push_back(mana[2]);
+    mana.push_back(new Mana);
+    mana[3]->sprite->setPosition(sf::Vector2f(m_textures["ui/mp.png"].getSize().x * 4 + m_textures["ui/mana.png"].getSize().x * 3 * 4, m_textures["ui/hp.png"].getSize().y*4));
+    ui.push_back(mana[3]);
+
     ui.push_back(new Background);
 }
 
@@ -58,8 +84,6 @@ void Scene_Play::run(float time)
 void Scene_Play::update()
 {
 
-    hp->text->setString(std::to_string(player->health));
-
     for (int i = 0; i < entities.size(); i++)
     {
         entities[i]->update(deltaTime);
@@ -70,6 +94,40 @@ void Scene_Play::update()
         wave++;
         sSpawnWaves();
     }
+
+    if (player->health <= 3)
+    {
+        hearts[3]->sprite->setTexture(m_textures["ui/empty_heart.png"]);
+    }
+    if (player->health <= 2)
+    {
+        hearts[2]->sprite->setTexture(m_textures["ui/empty_heart.png"]);
+    }
+    if (player->health <= 1)
+    {
+        hearts[1]->sprite->setTexture(m_textures["ui/empty_heart.png"]);
+    }
+    if(player->health<=0)
+    {
+        hearts[0]->sprite->setTexture(m_textures["ui/empty_heart.png"]);
+    }
+
+    if (player->mana <= 3)
+    {
+        mana[3]->sprite->setTexture(m_textures["ui/empty_mana.png"]);
+    }
+    if (player->mana <= 2)
+    {
+        mana[2]->sprite->setTexture(m_textures["ui/empty_mana.png"]);
+    }
+    if (player->mana <= 1)
+    {
+        mana[1]->sprite->setTexture(m_textures["ui/empty_mana.png"]);
+    }
+    if(player->mana<=0)
+    {
+        mana[0]->sprite->setTexture(m_textures["ui/empty_mana.png"]);
+    }
 }
 
 void Scene_Play::sSpawnWaves()
@@ -78,13 +136,12 @@ void Scene_Play::sSpawnWaves()
     {
         entities.push_back(new Slime);
         entities.push_back(new Slime);
+        entities.push_back(new RedSkelWiz);
     }
     else
     {
-        entities.push_back(new Slime);
+        // entities.push_back(new Slime);
         // entities.push_back(new BlueSkelWiz);
-        // entities.push_back(new RedSkelWiz);
+        entities.push_back(new RedSkelWiz);
     }
-
-    // std::cout << entities.size() << std::endl;
 }

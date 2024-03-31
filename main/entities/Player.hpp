@@ -1,5 +1,6 @@
 #include "_Entity.hpp"
 #include "Explosion.hpp"
+#include "spells/_Spells.hpp"
 #pragma once
 class Player : public Entity
 {
@@ -17,12 +18,14 @@ Player::Player()
 {
 
     tag = "Player";
-    health = 1000;
+    health = 4;
+    mana=4;
 
-    lastActionFrame = -1;
     frameDelay = 0.2;
     animationTimer = 0;
     currentFrame = 0;
+    lastActionFrame = gameTime.getElapsedTime().asSeconds() + frameDelay;
+
 
     //
     animationMap["idle"].push_back(m_textures["blueWizard/idle0.png"]);
@@ -53,8 +56,10 @@ Player::Player()
 void Player::update(float time)
 {
     deltaTime = time;
+    if(actionTag!="die") {
     sInput();
     sAnimate();
+    }
 }
 
 void Player::sInput()
@@ -81,10 +86,11 @@ void Player::sInput()
         actionTag=(actionTag!="attack")?"move":"attack";
         direction = 1;
     }
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && mana>0)
     {
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
-        Entity *projectile = new Explosion(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id);
+        mana--;
+        Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id);
         entities.push_back(projectile);
         actionTag="attack";
     }

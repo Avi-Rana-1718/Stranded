@@ -4,5 +4,9 @@ class Projectile {
     int dmg;
     int projectileHealth;
     int knockback;
+    int lifetime;
+
+    int posX;
+    int posY;
     //
 };

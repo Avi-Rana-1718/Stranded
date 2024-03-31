@@ -1,11 +1,11 @@
-#include "_Entity.hpp"
+#include "../_Entity.hpp"
 #pragma once
-class Explosion : public Entity, public Projectile
+
+class Spells : public Entity, public Projectile
 {
 public:
-    Explosion(float originX, float originY, float targetX, float targetY, int id);
+    Spells(float originX, float originY, float targetX, float targetY, int id);
 
-    //
     void update(float time);
     // void sAnimate();
     void sMove();
@@ -13,40 +13,24 @@ public:
     void Collide();
 };
 
-Explosion::Explosion(float originX, float originY, float targetX, float targetY, int id)
+Spells::Spells(float originX, float originY, float targetX, float targetY, int id)
 {
 
     isProjectile = true;
     tag = "Explosion";
 
     ownerID = id;
-    dmg = 2;
+    dmg = 1;
     projectileHealth = 1;
+    lifetime=144;
     // projectileDuration=5;
     // knockback=;
-
-    frameDelay = 0.4;
-    animationTimer = 0;
-    currentFrame = 0;
-
-    animationMap["explode"].push_back(m_textures["spells/explosion/0.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/1.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/2.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/3.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/4.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/5.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/6.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/7.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/8.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/9.png"]);
-    animationMap["explode"].push_back(m_textures["spells/explosion/10.png"]);
 
     sprite = new CSprite(m_textures["spells/explosion/0.png"]);
     sprite->setOrigin(m_textures["spells/explosion/0.png"].getSize().x / 2, m_textures["spells/explosion/0.png"].getSize().y / 2);
     sprite->setPosition(sf::Vector2f(originX, originY));
 
     particles = new ParticleSystem(targetX, targetY);
-
 
     float dx = targetX - originX;
     float dy = targetY - originY;
@@ -55,38 +39,42 @@ Explosion::Explosion(float originX, float originY, float targetX, float targetY,
 
     transform = new CTransform(dx / l * 500, dy / l * 500);
 
-    scale = 2.5;
+    scale = 1;
 }
 
-void Explosion::update(float time)
+void Spells::update(float time)
 {
 
     deltaTime = time;
-    sAnimate();
     sMove();
+
+    if(lifetime--<=0) {
+        actionTag="die";
+    }
 
     particles->update(sprite->getPosition().x, sprite->getPosition().y);
 
     //
+    
+
     Collide();
 }
 
-void Explosion::sMove()
+void Spells::sMove()
 {
     sprite->move(transform->speedX * deltaTime, transform->speedY * deltaTime);
 }
 
-void Explosion::Collide()
+void Spells::Collide()
 {
     for (int i = 0; i < entities.size(); i++)
     {
-        if (entities[i]->sprite->getGlobalBounds().intersects(this->sprite->getGlobalBounds()) && entities[i] != this && entities[i]->tag != this->tag && entities[i]->id != ownerID && entities[i]->isProjectile == false && entities[i]->layer==this->layer)
+        if (entities[i]->sprite->getGlobalBounds().intersects(this->sprite->getGlobalBounds()) && entities[i] != this && entities[i]->tag != this->tag && entities[i]->id != ownerID && entities[i]->isProjectile == false && entities[i]->layer == this->layer)
         {
             entities[i]->hurt(dmg);
 
             float offsetX = (std::rand()) / 1000 * 10 * 10;
             float offsetY = (std::rand()) / 1000 * 10 * 10;
-
 
             view.setCenter(view.getCenter() + sf::Vector2f(offsetX, offsetY));
 
@@ -100,7 +88,7 @@ void Explosion::Collide()
             this->projectileHealth--;
         }
         // del
-        if (projectileHealth <= 0 || currentFrame == animationMap["explode"].size())
+        if (projectileHealth <= 0)
         {
             for (int i = 0; i < entities.size(); i++)
             {

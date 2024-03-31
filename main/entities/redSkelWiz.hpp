@@ -1,5 +1,5 @@
 #include "_Entity.hpp"
-#include "Explosion.hpp"
+#include "spells/_Spells.hpp"
 #pragma once
 class RedSkelWiz : public Entity
 {
@@ -22,7 +22,7 @@ RedSkelWiz::RedSkelWiz()
     target = entities[0];
 
     tag = "RedSkelWiz";
-    health = 10;
+    health = 4;
 
     frameDelay = 0.25;
     animationTimer = 0;
@@ -50,20 +50,27 @@ RedSkelWiz::RedSkelWiz()
     transform = new CTransform(150, 150);
 
     scale = 3.5;
-    isMoving = false;
+    actionTag = "idle";
 }
 
 void RedSkelWiz::update(float time)
 {
-    deltaTime = time;
-    sMove();
-    sAttack();
-    sAnimate();
+    if (actionTag != "die")
+    {
+        deltaTime = time;
+        sAnimate();
+        sAttack();
+        sMove();
+    }
 }
 
 void RedSkelWiz::sMove()
 {
-    isMoving = true;
+    if (actionTag != "die" && actionTag != "hurt" && actionTag != "attack")
+    {
+        actionTag = "move";
+    }
+
     float dx = target->sprite->getPosition().x - sprite->getPosition().x;
     float dy = target->sprite->getPosition().y - sprite->getPosition().y;
 
@@ -91,8 +98,13 @@ void RedSkelWiz::sAttack()
     if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && rec.getGlobalBounds().intersects(target->sprite->getGlobalBounds()))
     {
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
-        Entity *projectile = new Explosion(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);
+        Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);
+        projectile->particles->color = sf::Color(32, 178, 170);
         entities.push_back(projectile);
-        isAttacking = true;
+
+        if (actionTag != "hurt" && actionTag != "die")
+        {
+            actionTag = "attack";
+        }
     }
 }
