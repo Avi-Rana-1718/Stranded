@@ -4,6 +4,9 @@
 class Spells : public Entity, public Projectile
 {
 public:
+
+    Entity* lastTarget;
+
     Spells(float originX, float originY, float targetX, float targetY, int id);
 
     void update(float time);
@@ -11,6 +14,7 @@ public:
     void sMove();
 
     void Collide();
+
 };
 
 Spells::Spells(float originX, float originY, float targetX, float targetY, int id)
@@ -22,9 +26,12 @@ Spells::Spells(float originX, float originY, float targetX, float targetY, int i
     ownerID = id;
     dmg = 1;
     projectileHealth = 1;
-    lifetime=144;
+    lifetime=2;
+
     // projectileDuration=5;
     // knockback=;
+    lastActionFrame=0;
+    lastTarget=NULL;
 
     sprite = new CSprite(m_textures["spells/explosion/0.png"]);
     sprite->setOrigin(m_textures["spells/explosion/0.png"].getSize().x / 2, m_textures["spells/explosion/0.png"].getSize().y / 2);
@@ -48,7 +55,12 @@ void Spells::update(float time)
     deltaTime = time;
     sMove();
 
-    if(lifetime--<=0) {
+    if(gameTime.getElapsedTime().asSeconds()>lastActionFrame+1) {
+        lastActionFrame=gameTime.getElapsedTime().asSeconds();
+        lifetime--;
+    }
+
+    if(lifetime<=0) {
         actionTag="die";
     }
 
@@ -69,14 +81,12 @@ void Spells::Collide()
 {
     for (int i = 0; i < entities.size(); i++)
     {
-        if (entities[i]->sprite->getGlobalBounds().intersects(this->sprite->getGlobalBounds()) && entities[i] != this && entities[i]->tag != this->tag && entities[i]->id != ownerID && entities[i]->isProjectile == false && entities[i]->layer == this->layer)
+        if (entities[i]->sprite->getGlobalBounds().intersects(this->sprite->getGlobalBounds()) && entities[i] != this && entities[i]->tag != this->tag && entities[i]->id != ownerID && entities[i]->isProjectile == false && entities[i]->layer == this->layer && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 0.1 && lastTarget!=entities[i])
         {
             entities[i]->hurt(dmg);
 
-            float offsetX = (std::rand()) / 1000 * 10 * 10;
-            float offsetY = (std::rand()) / 1000 * 10 * 10;
-
-            view.setCenter(view.getCenter() + sf::Vector2f(offsetX, offsetY));
+            lastActionFrame=gameTime.getElapsedTime().asSeconds();
+            lastTarget=entities[i];
 
             entities[i]->text = new sf::Text;
             entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
@@ -88,7 +98,7 @@ void Spells::Collide()
             this->projectileHealth--;
         }
         // del
-        if (projectileHealth <= 0)
+        if (projectileHealth <= 0 || lifetime<=0)
         {
             for (int i = 0; i < entities.size(); i++)
             {

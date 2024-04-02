@@ -77,11 +77,23 @@ GameEngine::GameEngine()
     assets.addTexture("spells/explosion/9.png");
     assets.addTexture("spells/explosion/10.png");
 
-    assets.addTexture("slime/large/move0.png");
-    assets.addTexture("slime/large/move1.png");
-    assets.addTexture("slime/large/move2.png");
-    assets.addTexture("slime/large/hit.png");
-    assets.addTexture("slime/large/die.png");
+    assets.addTexture("slime/blue/move0.png");
+    assets.addTexture("slime/blue/move1.png");
+    assets.addTexture("slime/blue/move2.png");
+    assets.addTexture("slime/blue/hit.png");
+    assets.addTexture("slime/blue/die.png");
+
+    assets.addTexture("slime/green/move0.png");
+    assets.addTexture("slime/green/move1.png");
+    assets.addTexture("slime/green/move2.png");
+    assets.addTexture("slime/green/hit.png");
+    assets.addTexture("slime/green/die.png");
+
+    assets.addTexture("slime/lime/move0.png");
+    assets.addTexture("slime/lime/move1.png");
+    assets.addTexture("slime/lime/move2.png");
+    assets.addTexture("slime/lime/hit.png");
+    assets.addTexture("slime/lime/die.png");
 
     assets.addTexture("interactables/bronzeVase/idle.png");
     assets.addTexture("interactables/bronzeVase/hit.png");
@@ -99,9 +111,12 @@ GameEngine::GameEngine()
     assets.addTexture("ui/bar_blue_mid.png");
 
     assets.addFont("noto.ttf");
+    assets.addFont("singleday.ttf");
 
     currentScene = new Scene_Menu;
-    window.create(sf::VideoMode(WINDOW_W, WINDOW_H), "Dice wizard");
+    window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
+    WINDOW_W = window.getSize().x;
+    WINDOW_H = window.getSize().y;
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
@@ -119,6 +134,13 @@ void GameEngine::run()
 
         sf::Time time = Clock.restart();
         totalFrames++;
+
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window.create(sf::VideoMode::getDesktopMode(), "Dice wizard");
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11)) {
+            window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
+        }
 
         while (window.pollEvent(event))
         {

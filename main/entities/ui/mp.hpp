@@ -25,10 +25,12 @@ MP::MP()
     //
     animationMap["idle"].push_back(m_textures["ui/mp.png"]);
 
-    sprite = new CSprite(m_textures["ui/mp.png"]);
-    sprite->setPosition(0, m_textures["ui/hp.png"].getSize().y*4);
-    sprite->setOrigin(0, 0);
-    scale=4;
+    text = new sf::Text;
+    text->setFont(m_fonts["singleday.ttf"]); // font is a sf::Font
+    text->setString("MP");
+    text->setPosition(0, 55);
+    text->setCharacterSize(50); // in pixels, not points!
+    text->setFillColor(sf::Color::White);
 }
 
 void MP::update(float time=0)

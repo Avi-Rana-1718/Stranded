@@ -83,6 +83,8 @@ void Entity::sAnimate()
         actionTag = "die";
         sprite->setTexture(animationMap[actionTag][0]);
         animationTimer = gameTime.getElapsedTime().asSeconds();
+        score++;
+        std::cout<<score<<std::endl;
         return;
     }
 
@@ -119,4 +121,6 @@ void Entity::hurt(int dmg)
 {
     health -= dmg;
     actionTag = "hurt";
+    shake=10;
+    
 }

@@ -1,9 +1,9 @@
 #include "_Entity.hpp"
 
-class Slime : public Entity, public Hostile
+class LimeSlime : public Entity, public Hostile
 {
 public:
-    Slime();
+    LimeSlime();
     Entity *target = NULL;
 
     // functions
@@ -13,12 +13,12 @@ public:
     void sAttack();
 };
 
-Slime::Slime()
+LimeSlime::LimeSlime()
 {
     hatesPlayer = true;
     target = entities[0];
 
-    tag = "Slime";
+    tag = "LimeSlime";
     health = 3;
 
     frameDelay = 0.25;
@@ -28,14 +28,14 @@ Slime::Slime()
     attackDmg = 1;
 
     //
-    animationMap["move"].push_back(m_textures["slime/large/move0.png"]);
-    animationMap["move"].push_back(m_textures["slime/large/move1.png"]);
-    animationMap["move"].push_back(m_textures["slime/large/move2.png"]);
-    animationMap["attack"].push_back(m_textures["slime/large/move1.png"]);
-    animationMap["hurt"].push_back(m_textures["slime/large/hit.png"]);
-    animationMap["die"].push_back(m_textures["slime/large/die.png"]);
+    animationMap["move"].push_back(m_textures["slime/lime/move0.png"]);
+    animationMap["move"].push_back(m_textures["slime/lime/move1.png"]);
+    animationMap["move"].push_back(m_textures["slime/lime/move2.png"]);
+    animationMap["attack"].push_back(m_textures["slime/lime/move1.png"]);
+    animationMap["hurt"].push_back(m_textures["slime/lime/hit.png"]);
+    animationMap["die"].push_back(m_textures["slime/lime/die.png"]);
 
-    sprite = new CSprite(m_textures["slime/large/move0.png"]);
+    sprite = new CSprite(m_textures["slime/lime/move0.png"]);
     sprite->setPosition(sf::Vector2f((rand() % 1000 - 100) + 100, (rand() % 500 - 100) + 100));
     transform = new CTransform(120, 120);
 
@@ -44,7 +44,7 @@ Slime::Slime()
     actionTag = "move";
 }
 
-void Slime::update(float time)
+void LimeSlime::update(float time)
 {
     deltaTime = time;
     sAnimate();
@@ -52,7 +52,7 @@ void Slime::update(float time)
     sMove();
 }
 
-void Slime::sMove()
+void LimeSlime::sMove()
 {
 
     if (actionTag != "die" && actionTag != "hurt" && actionTag != "attack")
@@ -66,7 +66,7 @@ void Slime::sMove()
     sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
 }
 
-void Slime::sAttack()
+void LimeSlime::sAttack()
 {
 
     if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()) && actionTag != "hurt" && actionTag != "die")

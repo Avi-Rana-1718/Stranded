@@ -19,7 +19,7 @@ Player::Player()
 
     tag = "Player";
     health = 4;
-    mana=4;
+    mana=3;
 
     frameDelay = 0.2;
     animationTimer = 0;

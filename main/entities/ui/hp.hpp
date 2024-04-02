@@ -25,10 +25,12 @@ HP::HP()
     //
     animationMap["idle"].push_back(m_textures["ui/hp.png"]);
 
-    sprite = new CSprite(m_textures["ui/hp.png"]);
-    sprite->setPosition(0, 0);
-    sprite->setOrigin(0, 0);
-    scale=4;
+    text = new sf::Text;
+    text->setFont(m_fonts["singleday.ttf"]); // font is a sf::Font
+    text->setString("HP");
+    text->setPosition(0, 0);
+    text->setCharacterSize(50); // in pixels, not points!
+    text->setFillColor(sf::Color::White);
 }
 
 void HP::update(float time=0)
