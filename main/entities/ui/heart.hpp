@@ -18,6 +18,7 @@ Heart::Heart()
 
     sprite = new CSprite(m_textures["ui/heart.png"]);
     sprite->setOrigin(0, 0);
+    sprite->setPosition(0, 0);
     scale = 4;
 }
 

@@ -3,6 +3,7 @@
 // declarations
 std::map<std::string, sf::Texture> m_textures;
 std::map<std::string, sf::Font> m_fonts;
+std::map<std::string, sf::Shader*> m_shaders;
 
 class AssetManager
 {
@@ -10,6 +11,7 @@ class AssetManager
 public:
     void addTexture(std::string);
     void addFont(std::string);
+    void addShader(std::string);
 };
 
 void AssetManager::addTexture(std::string path)

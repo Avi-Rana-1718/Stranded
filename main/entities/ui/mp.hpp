@@ -23,17 +23,17 @@ MP::MP()
     currentFrame = 0;
 
     //
-    animationMap["idle"].push_back(m_textures["ui/mp.png"]);
+    // animationMap["idle"].push_back(m_textures["ui/mp.png"]);
 
     text = new sf::Text;
     text->setFont(m_fonts["singleday.ttf"]); // font is a sf::Font
     text->setString("MP");
-    text->setPosition(0, 55);
+    text->setPosition(20, 55);
     text->setCharacterSize(50); // in pixels, not points!
     text->setFillColor(sf::Color::White);
 }
 
 void MP::update(float time=0)
 {
-    sAnimate();
+    
 }

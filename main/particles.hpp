@@ -6,7 +6,7 @@ class ParticleSystem {
 public:
     struct Particle {
         sf::Vector2f velocity;
-        int lifetime=0;
+        int lifetime=1000;
     };
 std::vector<Particle> particles;
 sf::VertexArray vertices;
@@ -16,7 +16,7 @@ float particleSize=8;
 int mx;
 int my;
 
-sf::Color color = sf::Color(255, 0, 255, 255);
+sf::Color color = sf::Color(255, 255, 255, 127);
 
 ParticleSystem(int x, int y) {
     resetParticles();
@@ -24,7 +24,7 @@ ParticleSystem(int x, int y) {
     my=y;
 }
 
-void resetParticles(int x=-1000, int y=-1000, int count = 300, int size = 5) {
+void resetParticles(int x=-1000, int y=-1000, int count = 20, int size = 4) {
     particles = std::vector<Particle>(count);
     vertices = sf::VertexArray(sf::Quads, count*4);
     particleSize=size; 
@@ -49,17 +49,17 @@ void resetParticle(int index, int x, int y) {
     float rx = ((float)rand() / RAND_MAX) * 1;
     float ry = ((float)rand() / RAND_MAX) * 1;
 
-    if(mx-x >= 0) {
-        rx=-rx;
-    }
-    if(my-y >= 0) {
-        ry=-ry;
-    }
+    // if(mx-x >= 0) {
+    //     rx=-rx;
+    // }
+    // if(my-y >= 0) {
+    //     ry=-ry;
+    // }
 
 
     particles[index].velocity = sf::Vector2f(rx, ry);
 
-    particles[index].lifetime = 10 + rand()%30;
+    particles[index].lifetime = 2000 + rand()%1000;
 
 }
 void update(int x, int y) {

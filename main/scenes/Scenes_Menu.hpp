@@ -1,5 +1,4 @@
 #include "../entities/_Entity.hpp"
-#include "./Scenes_Play.hpp"
 
 #include "../entities/ui/button.hpp"
 #include "../entities/bg/map.hpp"
@@ -9,24 +8,33 @@
 class Scene_Menu : public Scenes
 {
 public:
-
-    
-
-    Entity* start;
-
     //
 
-    Scene_Menu();
-
+    void init();
     void run(float time);
     void update();
     // systems
 };
 
-Scene_Menu::Scene_Menu()
+void Scene_Menu::init()
 {
-    ui.push_back(new Button("Start", "Scene_Play"));
-    // ui.push_back(new Background);
+    Scenes::init();
+
+    window.setMouseCursorVisible(true);
+    Entity* temp = new Button("Start", "Scene_Play");
+    temp->text->setPosition(50, WINDOW_H/2);
+    ui.push_back(temp);
+
+    Entity* temp2 = new Button("Credits", "Scene_Credits");
+    temp2->text->setPosition(50, WINDOW_H/2 + 80);
+    ui.push_back(temp2);
+
+
+    // Entity* temp3 = new Button("Credits", "Scene_Credits");
+    // temp3->text->setPosition(50, WINDOW_H/2 + 160);
+    // ui.push_back(temp3);
+
+
 }
 
 void Scene_Menu::run(float time)
@@ -43,8 +51,5 @@ void Scene_Menu::update()
 
     for(auto& entity : ui) {
         entity->update(deltaTime);
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-        currentScene=new Scene_Play;
     }
 }

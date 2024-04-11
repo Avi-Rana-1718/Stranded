@@ -5,8 +5,7 @@ class Projectile {
     int projectileHealth;
     int knockback;
     int lifetime;
-
-    int posX;
-    int posY;
+    
+    sf::Color color;
     //
 };

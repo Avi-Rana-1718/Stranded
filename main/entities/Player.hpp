@@ -1,5 +1,4 @@
 #include "_Entity.hpp"
-#include "Explosion.hpp"
 #include "spells/_Spells.hpp"
 #pragma once
 class Player : public Entity
@@ -7,6 +6,9 @@ class Player : public Entity
 
 public:
     Player();
+
+
+    int dashActionFrame;
 
     // functions
     void update(float time);
@@ -18,80 +20,106 @@ Player::Player()
 {
 
     tag = "Player";
-    health = 4;
-    mana=3;
+    health = 10;
+    mana = 3;
+
+    std::cout<<id;
+
+    // projectile
+    playerProps.projectileDamage = 1;
+    playerProps.projectileHealth = 1;
+    playerProps.projectileLifetime = 3;
+    playerProps.projectileFirerate = 0.1;
 
     frameDelay = 0.2;
     animationTimer = 0;
     currentFrame = 0;
-    lastActionFrame = gameTime.getElapsedTime().asSeconds() + frameDelay;
-
+    lastActionFrame = 0;
+    dashActionFrame = 0;
 
     //
-    animationMap["idle"].push_back(m_textures["blueWizard/idle0.png"]);
-    animationMap["idle"].push_back(m_textures["blueWizard/idle1.png"]);
-    animationMap["idle"].push_back(m_textures["blueWizard/idle2.png"]);
-    animationMap["idle"].push_back(m_textures["blueWizard/idle3.png"]);
-    animationMap["move"].push_back(m_textures["blueWizard/idle0.png"]);
-    animationMap["move"].push_back(m_textures["blueWizard/idle1.png"]);
-    animationMap["move"].push_back(m_textures["blueWizard/idle2.png"]);
-    animationMap["move"].push_back(m_textures["blueWizard/idle3.png"]);
-    animationMap["attack"].push_back(m_textures["blueWizard/attack0.png"]);
-    animationMap["attack"].push_back(m_textures["blueWizard/attack1.png"]);
-    animationMap["attack"].push_back(m_textures["blueWizard/attack2.png"]);
-    animationMap["attack"].push_back(m_textures["blueWizard/attack3.png"]);
-    animationMap["hurt"].push_back(m_textures["blueWizard/hurt0.png"]);
-    animationMap["die"].push_back(m_textures["blueWizard/die.png"]);
+    animationMap["idle"].push_back(m_textures["player/idle0.png"]);
+    animationMap["idle"].push_back(m_textures["player/idle1.png"]);
+    animationMap["idle"].push_back(m_textures["player/idle2.png"]);
+    animationMap["idle"].push_back(m_textures["player/idle3.png"]);
+    animationMap["idle"].push_back(m_textures["player/idle4.png"]);
 
-    sprite = new CSprite(m_textures["blueWizard/idle0.png"]);
-    sprite->setOrigin(m_textures["blueWizard/idle0.png"].getSize().x / 2, m_textures["spells/explosion/0.png"].getSize().y / 2);
-    sprite->setPosition(sf::Vector2f(100, 100));
+    animationMap["move-horizontal"].push_back(m_textures["player/move-h0.png"]);
+    animationMap["move-horizontal"].push_back(m_textures["player/move-h1.png"]);
+    animationMap["move-horizontal"].push_back(m_textures["player/move-h2.png"]);
+    animationMap["move-horizontal"].push_back(m_textures["player/move-h3.png"]);
+
+    animationMap["hurt"].push_back(m_textures["player/hurt.png"]);
+
+    animationMap["die"].push_back(m_textures["player/die.png"]);
+
+    sprite = new CSprite(m_textures["player/idle0.png"]);
+    sprite->setOrigin(m_textures["player/idle0.png"].getSize().x / 2, m_textures["spells/explosion/0.png"].getSize().y / 2);
+    sprite->setPosition(sf::Vector2f(300, 300));
 
     scale = 4;
 
-    transform = new CTransform(500.f, 500.f);
-    actionTag="idle";
+    transform = new CTransform(320.f, 320.f);
+    actionTag = "idle";
 }
 
 void Player::update(float time)
 {
     deltaTime = time;
-    if(actionTag!="die") {
-    sInput();
-    sAnimate();
+    if (actionTag != "die")
+    {
+        sInput();
+        sAnimate();
     }
 }
 
 void Player::sInput()
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sprite->getPosition().y > 0 + m_textures["spells/explosion/0.png"].getSize().y / 2)
     {
         sprite->move(0, -transform->speedY * deltaTime);
-        actionTag=(actionTag!="attack")?"move":"attack";
+        actionTag = (actionTag != "attack") ? "move" : "attack";
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sprite->getPosition().y < WINDOW_H - m_textures["spells/explosion/0.png"].getSize().y / 2)
     {
         sprite->move(0, transform->speedY * deltaTime);
-        actionTag=(actionTag!="attack")?"move":"attack";
+        actionTag = (actionTag != "attack") ? "move" : "attack";
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sprite->getPosition().x > 0 + m_textures["spells/explosion/0.png"].getSize().x / 2)
     {
         sprite->move(-transform->speedX * deltaTime, 0);
-        actionTag=(actionTag!="attack")?"move":"attack";
-        direction = -1;
+        actionTag = (actionTag != "attack") ? "move" : "attack";
+        direction = "right";
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sprite->getPosition().x < WINDOW_W - m_textures["spells/explosion/0.png"].getSize().x / 2)
     {
         sprite->move(transform->speedX * deltaTime, 0);
-        actionTag=(actionTag!="attack")?"move":"attack";
-        direction = 1;
+        actionTag = (actionTag != "attack") ? "move" : "attack";
+        direction = "left";
     }
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && mana>0)
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Event::MouseButtonReleased && gameTime.getElapsedTime().asSeconds() > lastActionFrame + playerProps.projectileFirerate)
     {
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
-        mana--;
-        Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id);
+        Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id, playerProps.projectileDamage, playerProps.projectileHealth, playerProps.projectileLifetime);
         entities.push_back(projectile);
-        actionTag="attack";
+        // actionTag="attack";
+    }
+
+    // dash
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gameTime.getElapsedTime().asSeconds() > dashActionFrame - 5)
+    {
+
+        dashActionFrame = gameTime.getElapsedTime().asSeconds() + 10;
+        isInvulnerable=true;
+
+        float dx = sf::Mouse::getPosition(window).x - sprite->getPosition().x;
+        float dy = sf::Mouse::getPosition(window).y - sprite->getPosition().y;
+
+        float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
+
+        sprite->move(dx / l * 12000 * deltaTime, dy / l * 12000 * deltaTime);
+    } else if (isInvulnerable && gameTime.getElapsedTime().asSeconds() > dashActionFrame + 1) {
+        isInvulnerable=false;
     }
 }

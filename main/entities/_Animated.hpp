@@ -6,5 +6,6 @@ class Animated {
     float animationTimer;
     int currentFrame;
 
-    int direction;
+    std::string direction;
+    int rotate;
 };

@@ -2,9 +2,12 @@
 #include "particles.hpp"
 #include "scenes/Scenes.hpp"
 
+#include "scenes/Scenes_Over.hpp"
+#include "scenes/Scenes_Credits.hpp"
 #include "scenes/Scenes_Play.hpp"
 #include "scenes/Scenes_Menu.hpp"
 
+#include "./entities/ui/button.hpp"
 
 class GameEngine
 {
@@ -13,7 +16,7 @@ class GameEngine
 
 public:
     sf::Event event;
-    
+
     AssetManager assets;
 
     GameEngine();
@@ -25,45 +28,74 @@ public:
 GameEngine::GameEngine()
 {
 
-    assets.addTexture("blueWizard/idle0.png");
-    assets.addTexture("blueWizard/idle1.png");
-    assets.addTexture("blueWizard/idle2.png");
-    assets.addTexture("blueWizard/idle3.png");
-    assets.addTexture("blueWizard/move0.png");
-    assets.addTexture("blueWizard/move1.png");
-    assets.addTexture("blueWizard/attack0.png");
-    assets.addTexture("blueWizard/attack1.png");
-    assets.addTexture("blueWizard/attack2.png");
-    assets.addTexture("blueWizard/attack3.png");
-    assets.addTexture("blueWizard/hurt0.png");
-    assets.addTexture("blueWizard/die.png");
+    window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
+    WINDOW_W = window.getSize().x;
+    WINDOW_H = window.getSize().y;
 
-    assets.addTexture("blueSkeletonWizard/idle0.png");
-    assets.addTexture("blueSkeletonWizard/idle1.png");
-    assets.addTexture("blueSkeletonWizard/idle2.png");
-    assets.addTexture("blueSkeletonWizard/idle3.png");
-    assets.addTexture("blueSkeletonWizard/attack0.png");
-    assets.addTexture("blueSkeletonWizard/attack1.png");
-    assets.addTexture("blueSkeletonWizard/attack2.png");
-    assets.addTexture("blueSkeletonWizard/attack3.png");
-    assets.addTexture("blueSkeletonWizard/attack4.png");
-    assets.addTexture("blueSkeletonWizard/attack5.png");
-    assets.addTexture("blueSkeletonWizard/hit.png");
-    assets.addTexture("blueSkeletonWizard/die.png");
+    assets.addTexture("player/idle0.png");
+    assets.addTexture("player/idle1.png");
+    assets.addTexture("player/idle2.png");
+    assets.addTexture("player/idle3.png");
+    assets.addTexture("player/idle4.png");
+    assets.addTexture("player/move-h0.png");
+    assets.addTexture("player/move-h1.png");
+    assets.addTexture("player/move-h2.png");
+    assets.addTexture("player/move-h3.png");
 
-    assets.addTexture("redSkeletonWizard/idle0.png");
-    assets.addTexture("redSkeletonWizard/idle1.png");
-    assets.addTexture("redSkeletonWizard/idle2.png");
-    assets.addTexture("redSkeletonWizard/idle3.png");
-    assets.addTexture("redSkeletonWizard/attack0.png");
-    assets.addTexture("redSkeletonWizard/attack1.png");
-    assets.addTexture("redSkeletonWizard/attack2.png");
-    assets.addTexture("redSkeletonWizard/attack3.png");
-    assets.addTexture("redSkeletonWizard/attack4.png");
-    assets.addTexture("redSkeletonWizard/attack5.png");
-    assets.addTexture("redSkeletonWizard/hit.png");
-    assets.addTexture("redSkeletonWizard/die.png");
+    assets.addTexture("player/hurt.png");
+    assets.addTexture("player/die.png");
 
+    assets.addTexture("guard/idle0.png");
+    assets.addTexture("guard/idle1.png");
+    assets.addTexture("guard/idle2.png");
+    assets.addTexture("guard/idle3.png");
+    assets.addTexture("guard/idle4.png");
+
+    assets.addTexture("guard/attack0.png");
+    assets.addTexture("guard/attack1.png");
+    assets.addTexture("guard/attack2.png");
+    assets.addTexture("guard/attack3.png");
+    assets.addTexture("guard/attack4.png");
+
+    assets.addTexture("guard/die0.png");
+
+    assets.addTexture("warrior/idle0.png");
+    assets.addTexture("warrior/idle1.png");
+    assets.addTexture("warrior/idle2.png");
+    assets.addTexture("warrior/idle3.png");
+    assets.addTexture("warrior/idle4.png");
+
+    assets.addTexture("warrior/attack0.png");
+    assets.addTexture("warrior/attack1.png");
+    assets.addTexture("warrior/attack2.png");
+    assets.addTexture("warrior/attack3.png");
+    assets.addTexture("warrior/attack4.png");
+
+    assets.addTexture("warrior/hit.png");
+
+    assets.addTexture("warrior/die0.png");
+
+    assets.addTexture("archer/idle0.png");
+    assets.addTexture("archer/idle1.png");
+    assets.addTexture("archer/idle2.png");
+    assets.addTexture("archer/idle3.png");
+    assets.addTexture("archer/idle4.png");
+
+    assets.addTexture("archer/move0.png");
+    assets.addTexture("archer/move1.png");
+    assets.addTexture("archer/move2.png");
+    assets.addTexture("archer/move3.png");
+
+    assets.addTexture("archer/attack0.png");
+    assets.addTexture("archer/attack1.png");
+    assets.addTexture("archer/attack2.png");
+    assets.addTexture("archer/attack3.png");
+    assets.addTexture("archer/attack4.png");
+    assets.addTexture("archer/attack5.png");
+    assets.addTexture("archer/attack6.png");
+
+    assets.addTexture("archer/hurt.png");
+    assets.addTexture("archer/die.png");
 
     assets.addTexture("spells/explosion/0.png");
     assets.addTexture("spells/explosion/1.png");
@@ -77,33 +109,12 @@ GameEngine::GameEngine()
     assets.addTexture("spells/explosion/9.png");
     assets.addTexture("spells/explosion/10.png");
 
-    assets.addTexture("slime/blue/move0.png");
-    assets.addTexture("slime/blue/move1.png");
-    assets.addTexture("slime/blue/move2.png");
-    assets.addTexture("slime/blue/hit.png");
-    assets.addTexture("slime/blue/die.png");
-
-    assets.addTexture("slime/green/move0.png");
-    assets.addTexture("slime/green/move1.png");
-    assets.addTexture("slime/green/move2.png");
-    assets.addTexture("slime/green/hit.png");
-    assets.addTexture("slime/green/die.png");
-
-    assets.addTexture("slime/lime/move0.png");
-    assets.addTexture("slime/lime/move1.png");
-    assets.addTexture("slime/lime/move2.png");
-    assets.addTexture("slime/lime/hit.png");
-    assets.addTexture("slime/lime/die.png");
-
-    assets.addTexture("interactables/bronzeVase/idle.png");
-    assets.addTexture("interactables/bronzeVase/hit.png");
-
     assets.addTexture("ui/hp.png");
     assets.addTexture("ui/mp.png");
 
     assets.addTexture("ui/heart.png");
     assets.addTexture("ui/empty_heart.png");
-    
+
     assets.addTexture("ui/mana.png");
     assets.addTexture("ui/empty_mana.png");
 
@@ -112,11 +123,18 @@ GameEngine::GameEngine()
 
     assets.addFont("noto.ttf");
     assets.addFont("singleday.ttf");
+    assets.addFont("epilogue.ttf");
+    assets.addFont("technicality.ttf");
 
-    currentScene = new Scene_Menu;
-    window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
-    WINDOW_W = window.getSize().x;
-    WINDOW_H = window.getSize().y;
+    assets.addTexture("gun.png");
+    assets.addTexture("crosshair.png");
+
+  scenes["menu"] = new Scene_Menu;
+    scenes["play"] = new Scene_Play;
+    scenes["credits"] = new Scene_Credits;
+    scenes["over"] = new Scene_Over;
+
+    currentScene = scenes["play"];
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
@@ -128,17 +146,20 @@ GameEngine::GameEngine()
 
 void GameEngine::run()
 {
+    currentScene->init();
 
-    while (isRunning)
+    while (isRunning && currentScene != NULL)
     {
 
         sf::Time time = Clock.restart();
         totalFrames++;
 
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+        {
             window.create(sf::VideoMode::getDesktopMode(), "Dice wizard");
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11)) {
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11))
+        {
             window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
         }
 

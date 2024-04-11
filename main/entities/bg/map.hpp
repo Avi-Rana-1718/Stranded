@@ -22,7 +22,7 @@ Background::Background()
     sprite = new CSprite(m_textures["map.png"]);
     sprite->setOrigin(m_textures["map.png"].getSize().x/2, m_textures["map.png"].getSize().y/2);
     sprite->setPosition(sf::Vector2f(WINDOW_W/2,WINDOW_H/2));
-    scale=5.5;
+    scale=4.5;
 }
 
 void Background::update(float time)

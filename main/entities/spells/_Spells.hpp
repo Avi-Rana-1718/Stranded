@@ -7,7 +7,7 @@ public:
 
     Entity* lastTarget;
 
-    Spells(float originX, float originY, float targetX, float targetY, int id);
+    Spells(float originX, float originY, float targetX, float targetY, int id, int damage, int phealth, int life);
 
     void update(float time);
     // void sAnimate();
@@ -17,19 +17,17 @@ public:
 
 };
 
-Spells::Spells(float originX, float originY, float targetX, float targetY, int id)
+Spells::Spells(float originX, float originY, float targetX, float targetY, int id, int damage=1, int phealth=1, int life=2)
 {
-
+    hatesPlayer=false;
     isProjectile = true;
     tag = "Explosion";
 
     ownerID = id;
-    dmg = 1;
-    projectileHealth = 1;
-    lifetime=2;
+    dmg = damage;
+    projectileHealth = phealth;
+    lifetime=life; // in sec
 
-    // projectileDuration=5;
-    // knockback=;
     lastActionFrame=0;
     lastTarget=NULL;
 
@@ -37,7 +35,7 @@ Spells::Spells(float originX, float originY, float targetX, float targetY, int i
     sprite->setOrigin(m_textures["spells/explosion/0.png"].getSize().x / 2, m_textures["spells/explosion/0.png"].getSize().y / 2);
     sprite->setPosition(sf::Vector2f(originX, originY));
 
-    particles = new ParticleSystem(targetX, targetY);
+    // particles = new ParticleSystem(targetX, targetY);
 
     float dx = targetX - originX;
     float dy = targetY - originY;
@@ -64,8 +62,7 @@ void Spells::update(float time)
         actionTag="die";
     }
 
-    particles->update(sprite->getPosition().x, sprite->getPosition().y);
-
+    // particles->update(sprite->getPosition().x, sprite->getPosition().y);
     //
     
 
@@ -88,12 +85,19 @@ void Spells::Collide()
             lastActionFrame=gameTime.getElapsedTime().asSeconds();
             lastTarget=entities[i];
 
-            entities[i]->text = new sf::Text;
-            entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
-            entities[i]->text->setString(std::to_string(dmg));
-            entities[i]->text->setPosition(entities[i]->sprite->getPosition().x + 24, entities[i]->sprite->getPosition().y + 24);
-            entities[i]->text->setCharacterSize(24); // in pixels, not points!
-            entities[i]->text->setFillColor(sf::Color::Red);
+            float dx = entities[i]->sprite->getPosition().x - sprite->getPosition().x;
+            float dy = entities[i]->sprite->getPosition().y - sprite->getPosition().y;
+
+            float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
+
+            entities[i]->sprite->move(dx/l*20, dy/l*20);
+
+            // entities[i]->text = new sf::Text;
+            // entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
+            // entities[i]->text->setString(std::to_string(dmg));
+            // entities[i]->text->setPosition(entities[i]->sprite->getPosition().x + 24, entities[i]->sprite->getPosition().y + 24);
+            // entities[i]->text->setCharacterSize(24); // in pixels, not points!
+            // entities[i]->text->setFillColor(sf::Color::Red);
 
             this->projectileHealth--;
         }

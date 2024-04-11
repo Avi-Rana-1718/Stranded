@@ -16,24 +16,15 @@ HP::HP()
 {
 
     tag="HP";
-
-    lastActionFrame = -1;
-    frameDelay = 0.25;
-    animationTimer = 0;
-    currentFrame = 0;
-
     //
-    animationMap["idle"].push_back(m_textures["ui/hp.png"]);
-
-    text = new sf::Text;
-    text->setFont(m_fonts["singleday.ttf"]); // font is a sf::Font
-    text->setString("HP");
-    text->setPosition(0, 0);
-    text->setCharacterSize(50); // in pixels, not points!
-    text->setFillColor(sf::Color::White);
+    
+    sprite = new CSprite(m_textures["ui/heart.png"]);
+    sprite->setPosition(-20, -20);
+    // sprite->setOrigin(m_textures["ui/heart.png"].getSize().x/2, m_textures["ui/heart.png"].getSize().y/2); 
+    scale=4;
 }
 
 void HP::update(float time=0)
 {
-    sAnimate();
+   
 }

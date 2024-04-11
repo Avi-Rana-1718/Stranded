@@ -7,49 +7,97 @@ class Button : public Entity
 
 public:
     std::string action;
+    bool isClicked;
 
     Button(std::string label, std::string scene);
+    ~Button();
 
     // functions
     void update(float time);
     void listen();
-
+    void decideAction();
 };
 
 Button::Button(std::string label, std::string scene)
 {
-
-    tag="Button";
+    tag = "Button";
+    isClicked = false;
 
     action = scene;
 
-    //
-    sprite = new CSprite(m_textures["ui/bar_blue_mid.png"]);
-    sprite->setPosition(sf::Vector2f(WINDOW_W/2, WINDOW_H/2));
-    sprite->setOrigin(m_textures["ui/bar_blue_mid.png"].getSize().x/2, m_textures["ui/bar_blue_mid.png"].getSize().y/2);
-    scale=10;
-
     text = new sf::Text;
-    text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
-    text->setString("Button");
-    text->setPosition(sprite->getPosition().x-24, sprite->getPosition().y-24);
-    text->setCharacterSize(24); // in pixels, not points!
+    text->setFont(m_fonts["epilogue.ttf"]); // font is a sf::Font
+    text->setString(label);
+    text->setPosition(0, 0);
+    text->setCharacterSize(50); // in pixels, not points!
     text->setFillColor(sf::Color::White);
-
 }
 
-void Button::update(float time=0)
+void Button::update(float time = 0)
 {
-    sAnimate();
+    decideAction();
     listen();
 }
 
-void Button::listen() {
-    if(sprite->getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        Scenes* temp = currentScene;
-        if(action=="Scene_Play") {
-        currentScene =  new Scene_Play;
-        }
-        delete temp;
+void Button::listen()
+{
+
+    // hover text change
+    if (text->getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))))
+    {
+        text->setFillColor(sf::Color(128, 128, 128));
     }
+    else
+    {
+        text->setFillColor(sf::Color(255, 255, 255));
+    }
+
+    // click
+    if (text->getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))) && sf::Mouse::isButtonPressed(sf::Mouse::Left) && isClicked == false)
+    {
+
+        isClicked = true;
+
+        if (action == "p_inc_dmg")
+        {
+            spawn = true; // enemy/wave spawn set true
+            playerProps.projectileDamage++;
+            std::cout<<"a";
+        }
+        else if (action == "Scene_Play" || action == "Scene_Credits" || action == "Scene_Menu")
+        {
+            if (action == "Scene_Play")
+            {
+                delete currentScene;
+                currentScene = scenes["play"];
+            }
+            else if (action == "Scene_Menu")
+            {
+                currentScene = scenes["menu"];
+            }
+            else if (action == "Scene_Credits")
+            {
+                currentScene = scenes["credits"];
+            }
+
+            currentScene->init();
+        }
+        else
+        {
+            std::cout << "ERROR: Unregistered Action" << std::endl;
+        }
+    }
+}
+
+void Button::decideAction() {
+        if(text->getString()=="incPD") {
+            text->setString("Increase DMG");
+            action="p_inc_dmg";
+            isClicked=false;
+        }
+}
+
+Button::~Button()
+{
+    delete text;
 }

@@ -6,26 +6,37 @@ class Scenes
 {
 
 public:
-    Scenes();
+
     ~Scenes();
 
     float deltaTime;
 
     // functions
+    virtual void init();
     virtual void run(float time);
 
     void sRender();
     void sEntityUpdate();
 };
 
-Scenes::Scenes()
-{
-    ui.erase(ui.begin(), ui.end());
-    entities.erase(entities.begin(), entities.end());
+void Scenes::init() {
+        ui.erase(ui.begin(), ui.end());
+        entities.erase(entities.begin(), entities.end());
+        background.erase(background.begin(), background.end());
 }
 
 Scenes::~Scenes()
 {
+    std::cout << "base";
+    if (!ui.empty())
+    {
+        ui.erase(ui.begin(), ui.end());
+    }
+
+    if (!entities.empty())
+    {
+        entities.erase(entities.begin(), entities.end());
+    }
 }
 
 void Scenes::run(float time)
@@ -37,52 +48,62 @@ void Scenes::run(float time)
 
 void Scenes::sRender()
 {
-    window.clear();
+    window.clear(sf::Color(81, 58, 61));
+
+    // background
+    for (auto &entity : background)
+    {
+        if (entity->sprite != NULL)
+        {
+            entity->sprite->setScale(sf::Vector2f(entity->rotate * entity->scale, entity->scale));
+            window.draw(*(entity->sprite));
+        }
+        if (entity->text != NULL)
+        {
+            window.draw(*(entity->text));
+        }
+    }
+
+    // entities
+    for (auto &entity : entities)
+    {
+        if (entity->sprite != NULL)
+        {
+            window.draw(*(entity->sprite));
+            entity->sprite->setScale(sf::Vector2f(entity->rotate * entity->scale, entity->scale));
+        }
+        if (entity->text != NULL)
+        {
+            window.draw(*(entity->text));
+        }
+
+        // sf::FloatRect bounds = entity->sprite->getGlobalBounds();
+        // std::cout<<entity->tag;
+        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
+        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
+        // boundsRect.setFillColor(sf::Color::Transparent);
+        // boundsRect.setOutlineColor(sf::Color::Red);
+        // boundsRect.setOutlineThickness(2.f);
+        // window.draw(boundsRect);
+    }
 
     // ui
     for (auto &entity : ui)
     {
-        if(entity->sprite!=NULL) {
-        entity->sprite->setScale(sf::Vector2f(entity->direction * entity->scale, entity->scale));
-        window.draw(*(entity->sprite));
+        if (entity->sprite != NULL)
+        {
+            entity->sprite->setScale(sf::Vector2f(entity->rotate * entity->scale, entity->scale));
+            window.draw(*(entity->sprite));
         }
         if (entity->text != NULL)
         {
             window.draw(*(entity->text));
         }
-        // sf::FloatRect bounds = entity->text->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Red);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
-    }
-
-    for (auto &entity : entities)
-    {
-        // std::cout<<entity->id<<" ";
-        window.draw(*(entity->sprite));
-        if (entity->text != NULL)
-        {
-            window.draw(*(entity->text));
+        if(entity->particles!=NULL) {
+            window.draw(entity->particles->vertices);
         }
-
-        entity->sprite->setScale(sf::Vector2f(entity->direction * entity->scale, entity->scale));
-
-        // sf::FloatRect bounds = entity->sprite->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Red);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
-
-        if(entity->particles!=NULL)
-        window.draw(entity->particles->vertices);
     }
 
-    // std::cout<<std::endl;
     window.display();
 }
 
@@ -90,7 +111,7 @@ void Scenes::sEntityUpdate()
 {
     for (int i = 0; i < entities.size(); i++)
     {
-        if (entities[i]->actionTag=="die" && gameTime.getElapsedTime().asSeconds() > entities[i]->animationTimer + entities[i]->frameDelay)
+        if (entities[i]->actionTag == "die" && gameTime.getElapsedTime().asSeconds() > entities[i]->animationTimer + entities[i]->frameDelay)
         {
             delete entities[i];
             entities.erase(entities.begin() + i);
