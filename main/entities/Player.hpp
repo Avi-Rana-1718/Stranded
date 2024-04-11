@@ -8,7 +8,7 @@ public:
     Player();
 
 
-    int dashActionFrame;
+    // int dashActionFrame;
 
     // functions
     void update(float time);
@@ -21,21 +21,18 @@ Player::Player()
 
     tag = "Player";
     health = 10;
-    mana = 3;
 
-    std::cout<<id;
-
-    // projectile
+    // projectile props
     playerProps.projectileDamage = 1;
     playerProps.projectileHealth = 1;
     playerProps.projectileLifetime = 3;
-    playerProps.projectileFirerate = 0.1;
+    playerProps.projectileFirerate = 1;
 
     frameDelay = 0.2;
     animationTimer = 0;
     currentFrame = 0;
     lastActionFrame = 0;
-    dashActionFrame = 0;
+    // dashActionFrame = 0;
 
     //
     animationMap["idle"].push_back(m_textures["player/idle0.png"]);
@@ -102,24 +99,23 @@ void Player::sInput()
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, id, playerProps.projectileDamage, playerProps.projectileHealth, playerProps.projectileLifetime);
         entities.push_back(projectile);
-        // actionTag="attack";
     }
 
     // dash
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gameTime.getElapsedTime().asSeconds() > dashActionFrame - 5)
-    {
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gameTime.getElapsedTime().asSeconds() > dashActionFrame - 5)
+    // {
 
-        dashActionFrame = gameTime.getElapsedTime().asSeconds() + 10;
-        isInvulnerable=true;
+    //     dashActionFrame = gameTime.getElapsedTime().asSeconds() + 10;
+    //     isInvulnerable=true;
 
-        float dx = sf::Mouse::getPosition(window).x - sprite->getPosition().x;
-        float dy = sf::Mouse::getPosition(window).y - sprite->getPosition().y;
+    //     float dx = sf::Mouse::getPosition(window).x - sprite->getPosition().x;
+    //     float dy = sf::Mouse::getPosition(window).y - sprite->getPosition().y;
 
-        float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
+    //     float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
 
-        sprite->move(dx / l * 12000 * deltaTime, dy / l * 12000 * deltaTime);
-    } else if (isInvulnerable && gameTime.getElapsedTime().asSeconds() > dashActionFrame + 1) {
-        isInvulnerable=false;
-    }
+    //     sprite->move(dx / l * 12000 * deltaTime, dy / l * 12000 * deltaTime);
+    // } else if (isInvulnerable && gameTime.getElapsedTime().asSeconds() > dashActionFrame + 1) {
+    //     isInvulnerable=false;
+    // }
 }

@@ -92,12 +92,12 @@ void Spells::Collide()
 
             entities[i]->sprite->move(dx/l*20, dy/l*20);
 
-            // entities[i]->text = new sf::Text;
-            // entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
-            // entities[i]->text->setString(std::to_string(dmg));
-            // entities[i]->text->setPosition(entities[i]->sprite->getPosition().x + 24, entities[i]->sprite->getPosition().y + 24);
-            // entities[i]->text->setCharacterSize(24); // in pixels, not points!
-            // entities[i]->text->setFillColor(sf::Color::Red);
+            entities[i]->text = new sf::Text;
+            entities[i]->text->setFont(m_fonts["noto.ttf"]); // font is a sf::Font
+            entities[i]->text->setString(std::to_string(dmg));
+            entities[i]->text->setPosition(entities[i]->sprite->getPosition().x + 24, entities[i]->sprite->getPosition().y + 24);
+            entities[i]->text->setCharacterSize(24); // in pixels, not points!
+            entities[i]->text->setFillColor(sf::Color::Red);
 
             this->projectileHealth--;
         }

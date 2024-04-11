@@ -62,7 +62,12 @@ void Button::listen()
         {
             spawn = true; // enemy/wave spawn set true
             playerProps.projectileDamage++;
-            std::cout<<"a";
+        } else if(action == "p_inc_ph") {
+            spawn=true;
+            playerProps.projectileHealth++;
+        } else if (action == "p_inc_pf") {
+            spawn=true;
+            playerProps.projectileFirerate-=0.1;
         }
         else if (action == "Scene_Play" || action == "Scene_Credits" || action == "Scene_Menu")
         {
@@ -91,8 +96,16 @@ void Button::listen()
 
 void Button::decideAction() {
         if(text->getString()=="incPD") {
-            text->setString("Increase DMG");
+            text->setString("INC DMG");
             action="p_inc_dmg";
+            isClicked=false;
+        } else if (text->getString()=="incPH") {
+            text->setString("INC PH");
+            action="p_inc_ph";
+            isClicked=false;
+        } else if (text->getString()=="incPF") {
+            text->setString("INC PF");
+            action="p_inc_pf";
             isClicked=false;
         }
 }

@@ -20,7 +20,6 @@ public:
     int layer;
 
     int health;
-    int mana;
 
     float lastActionFrame;
     float scale;
