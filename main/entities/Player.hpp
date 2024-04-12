@@ -23,10 +23,10 @@ Player::Player()
     health = 10;
 
     // projectile props
-    playerProps.projectileDamage = 1;
+    playerProps.projectileDamage = 5;
     playerProps.projectileHealth = 1;
     playerProps.projectileLifetime = 3;
-    playerProps.projectileFirerate = 1;
+    playerProps.projectileFirerate = 0.1;
 
     frameDelay = 0.2;
     animationTimer = 0;

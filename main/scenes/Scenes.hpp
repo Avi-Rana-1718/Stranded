@@ -76,13 +76,13 @@ void Scenes::sRender()
             window.draw(*(entity->text));
         }
 
-        sf::FloatRect bounds = entity->sprite->getGlobalBounds();
-        sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        boundsRect.setFillColor(sf::Color::Transparent);
-        boundsRect.setOutlineColor(sf::Color::Red);
-        boundsRect.setOutlineThickness(2.f);
-        window.draw(boundsRect);
+        // sf::FloatRect bounds = entity->sprite->getGlobalBounds();
+        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
+        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
+        // boundsRect.setFillColor(sf::Color::Transparent);
+        // boundsRect.setOutlineColor(sf::Color::Red);
+        // boundsRect.setOutlineThickness(2.f);
+        // window.draw(boundsRect);
     }
 
     // ui
@@ -99,6 +99,9 @@ void Scenes::sRender()
         }
         if(entity->particles!=NULL) {
             window.draw(entity->particles->vertices);
+        }
+        if(entity->shape!=NULL) {
+            window.draw(*entity->shape);
         }
     }
 

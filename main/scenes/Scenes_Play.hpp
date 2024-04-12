@@ -23,6 +23,7 @@ public:
     Entity *annoucementText;
 
     Entity *b1, *b2, *b3;
+    Entity *btnBg;
 
     // announcementConfig
     bool showAnnoucement;
@@ -90,25 +91,34 @@ void Scene_Play::init()
     Entity *temp = new HP;
     ui.push_back(temp);
 
-    crosshair = new Crosshair;
-    ui.push_back(crosshair);
-
     par = new Entity;
     par->particles = new ParticleSystem(WINDOW_W, WINDOW_W);
     ui.push_back(par);
 
     // ui - powerup btns
+
+    btnBg = new Entity;
+    btnBg->shape= new sf::RectangleShape(sf::Vector2f(WINDOW_W+200, WINDOW_H/2.5));
+    btnBg->shape->setPosition(-100, WINDOW_H/3);
+    btnBg->shape->setFillColor(sf::Color(40, 40, 40));
+    btnBg->shape->setRotation(-2);
+    ui.push_back(btnBg);
+
     b1 = new Button("", "");
-    b1->text->setPosition(WINDOW_W*1/3-150, WINDOW_H/2);
+    b1->text->setPosition(WINDOW_W*1/3-400, WINDOW_H/2);
     ui.push_back(b1);
 
     b2 = new Button("", "");
-    b2->text->setPosition(WINDOW_W*2/3-150, WINDOW_H/2);
+    b2->text->setPosition(WINDOW_W*2/3-400, WINDOW_H/2);
     ui.push_back(b2);
 
     b3 = new Button("", "");
-    b3->text->setPosition(WINDOW_W*3/3-150, WINDOW_H/2);
+    b3->text->setPosition(WINDOW_W*3/3-400, WINDOW_H/2);
     ui.push_back(b3);
+
+    // crosshair
+    crosshair = new Crosshair;
+    ui.push_back(crosshair);
 
     // entities
     player = new Player;
@@ -199,6 +209,7 @@ void Scene_Play::update()
             spawn=true;
         } else {
             sSelectBuff();
+            btnBg->shape->setFillColor(sf::Color(40, 40, 40));
         }
 
         if (spawn == true)
@@ -206,6 +217,8 @@ void Scene_Play::update()
             b1->text->setString("");
             b2->text->setString("");
             b3->text->setString("");
+            btnBg->shape->setFillColor(sf::Color(40, 40, 40, 0));
+
             spawn = false;
             wave++;
             waveCounter->text->setString("WAVE " + std::to_string(wave));

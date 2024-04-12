@@ -32,6 +32,7 @@ public:
     CSprite *sprite = NULL;
     CTransform *transform = NULL;
     sf::Text *text = NULL;
+    sf::RectangleShape *shape = NULL;
     ParticleSystem *particles = NULL;
 
 
@@ -70,6 +71,8 @@ Entity::~Entity()
     delete sprite;
     delete transform;
     delete text;
+    delete shape;
+    delete particles;
 }
 
 void Entity::update(float time)
