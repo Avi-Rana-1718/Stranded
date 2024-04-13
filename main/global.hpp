@@ -5,6 +5,9 @@ sf::RenderWindow window;
 sf::View view;
 sf::Clock Clock;
 sf::Clock gameTime;
+sf::Sound sound;
+
+bool isRunning;
 
 int totalFrames;
 int shake;

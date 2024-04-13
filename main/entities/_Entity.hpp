@@ -38,6 +38,7 @@ public:
 
     float deltaTime;
     std::string actionTag;
+    
 
     // functions
     Entity();
@@ -63,6 +64,8 @@ Entity::Entity()
     isProjectile = false;
     honour=false;
     isInvulnerable=false;
+
+    scale=1;
 
     lastActionFrame=gameTime.getElapsedTime().asSeconds();
 }
@@ -148,6 +151,9 @@ void Entity::hurt(int dmg)
     if(honour==true) {
         honour=false;
     }
+
+    sound.setBuffer(m_sounds["hurt.wav"]);
+    sound.play();   
 
     }
     

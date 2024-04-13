@@ -6,16 +6,17 @@
 #include "../entities/Gun.hpp"
 #include "../entities/bg/map.hpp"
 #include "../entities/ui/heart.hpp"
-#include "../entities/ui/hp.hpp"
-#include "../entities/ui/mana.hpp"
-#include "../entities/ui/mp.hpp"
+#include "../entities/ui/energy.hpp"
 #include "../entities/ui/crosshair.hpp"
 #pragma once
 
 class Scene_Play : public Scenes
 {
 public:
-    Entity *player, *crosshair, *health, *par;
+    Entity *player, *crosshair, *par;
+
+    std::vector<Entity *> hearts;
+    Entity* energy;
 
     // ui elements
     Entity *waveCounter;
@@ -23,14 +24,16 @@ public:
     Entity *annoucementText;
 
     Entity *b1, *b2, *b3;
+    Entity *u1, *u2;
     Entity *btnBg;
+    Entity *bgTitle;
+    std::string bgStr = "Select Powerup";
 
     // announcementConfig
     bool showAnnoucement;
     std::string msg = "WAVE CLEARED!";
 
     float lastActionFrame;
-
 
     void init();
     void run(float time);
@@ -44,6 +47,7 @@ public:
 void Scene_Play::init()
 {
 
+
     Scenes::init();
     window.setMouseCursorVisible(false);
 
@@ -52,7 +56,7 @@ void Scene_Play::init()
 
     lastActionFrame = gameTime.getElapsedTime().asSeconds();
 
-    showAnnoucement=false;
+    showAnnoucement = false;
 
     // ui setup
     waveCounter = new Entity;
@@ -88,8 +92,16 @@ void Scene_Play::init()
     annoucementText->text->setString("");
     ui.push_back(annoucementText);
 
-    Entity *temp = new HP;
-    ui.push_back(temp);
+    for (int i = 0; i < 5; i++)
+    {
+        Entity *temp = new HP;
+        int intend = (i == 0) ? 0 : 20;
+        temp->sprite->move((temp->sprite->getGlobalBounds().getSize().x * temp->scale * i) - intend * i, 0);
+        hearts.push_back(temp);
+        ui.push_back(temp);
+    }
+
+    // ui.push_back(new Energy);
 
     par = new Entity;
     par->particles = new ParticleSystem(WINDOW_W, WINDOW_W);
@@ -98,22 +110,34 @@ void Scene_Play::init()
     // ui - powerup btns
 
     btnBg = new Entity;
-    btnBg->shape= new sf::RectangleShape(sf::Vector2f(WINDOW_W+200, WINDOW_H/2.5));
-    btnBg->shape->setPosition(-100, WINDOW_H/3);
+    btnBg->shape = new sf::RectangleShape(sf::Vector2f(WINDOW_W + 200, WINDOW_H / 2.5));
+    btnBg->shape->setPosition(-100, WINDOW_H / 3);
     btnBg->shape->setFillColor(sf::Color(40, 40, 40));
     btnBg->shape->setRotation(-2);
     ui.push_back(btnBg);
 
+    bgTitle = new Entity;
+    bgTitle->text = new sf::Text;
+    bgTitle->text->setFont(m_fonts["epilogue.ttf"]);
+    bgTitle->text->setString("Select powerup");
+    bgTitle->text->setOutlineColor(sf::Color(40, 40, 40));
+    bgTitle->text->setOutlineThickness(1.5);
+    bgTitle->text->setCharacterSize(50);
+    bgTitle->text->setOrigin(bgTitle->text->getGlobalBounds().getSize().x / 2, bgTitle->text->getGlobalBounds().getSize().y / 2);
+    bgTitle->text->setPosition(WINDOW_W / 2, btnBg->shape->getGlobalBounds().getPosition().y + 100);
+    bgTitle->text->setFillColor(sf::Color::White);
+    ui.push_back(bgTitle);
+
     b1 = new Button("", "");
-    b1->text->setPosition(WINDOW_W*1/3-400, WINDOW_H/2);
+    b1->text->setPosition(WINDOW_W * 1 / 3 - 400, WINDOW_H / 2);
     ui.push_back(b1);
 
     b2 = new Button("", "");
-    b2->text->setPosition(WINDOW_W*2/3-400, WINDOW_H/2);
+    b2->text->setPosition(WINDOW_W * 2 / 3 - 400, WINDOW_H / 2);
     ui.push_back(b2);
 
     b3 = new Button("", "");
-    b3->text->setPosition(WINDOW_W*3/3-400, WINDOW_H/2);
+    b3->text->setPosition(WINDOW_W * 3 / 3 - 400, WINDOW_H / 2);
     ui.push_back(b3);
 
     // crosshair
@@ -125,6 +149,35 @@ void Scene_Play::init()
     entities.push_back(player);
     entities.push_back(new Gun(player));
 
+    // mouse & keyboard
+
+    u2 = new Entity;
+    u2->scale = 0.8;
+    u2->sprite = new CSprite(m_textures["ui/inputs/keyboard_arrows_all.png"]);
+    u2->sprite->setPosition(10, WINDOW_H / 2 - 100);
+    u2->text = new sf::Text;
+    u2->text->setFont(m_fonts["technicality.ttf"]);
+    u2->text->setString("WASD to move!");
+    u2->text->setOutlineColor(sf::Color(40, 40, 40));
+    u2->text->setOutlineThickness(1.5);
+    u2->text->setCharacterSize(20);
+    u2->text->setPosition(10 + u2->sprite->getGlobalBounds().getSize().x, u2->sprite->getPosition().y + ((m_textures["ui/inputs/keyboard_arrows_all.png"].getSize().y / 2) * 0.8));
+    u2->text->setFillColor(sf::Color::White);
+    ui.push_back(u2);
+
+    u1 = new Entity;
+    u1->sprite = new CSprite(m_textures["ui/inputs/mouse_left.png"]);
+    u1->sprite->setPosition(u2->sprite->getGlobalBounds().getPosition().x / 2 + 10, u2->sprite->getPosition().y + u2->sprite->getGlobalBounds().getSize().y - 25);
+    u1->scale = 0.6;
+    u1->text = new sf::Text;
+    u1->text->setFont(m_fonts["technicality.ttf"]);
+    u1->text->setString("Left click to shoot!");
+    u1->text->setOutlineColor(sf::Color(40, 40, 40));
+    u1->text->setOutlineThickness(1.5);
+    u1->text->setCharacterSize(20);
+    u1->text->setPosition(10 + u2->sprite->getGlobalBounds().getSize().x, u1->sprite->getPosition().y + ((m_textures["ui/inputs/mouse_left.png"].getSize().y / 2) * 0.6));
+    u1->text->setFillColor(sf::Color::White);
+    ui.push_back(u1);
 
     // background
     bg = new Background;
@@ -138,12 +191,12 @@ void Scene_Play::run(float time)
     update();
     sRender();
     sEntityUpdate();
-
-    par->particles->update(-100, -100);
-}
+    }
 
 void Scene_Play::update()
 {
+
+    par->particles->update(-10, -10);
 
     // change crosshair position
     crosshair->sprite->setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
@@ -151,7 +204,63 @@ void Scene_Play::update()
     // change/set score
     scoreCounter->text->setString("SCORE " + std::to_string(score));
 
-    // health->text->setString(std::to_string(player->health));
+    // health
+    if (player->health == 5)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255));
+        }
+    }
+    else if (player->health == 4)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255));
+        }
+
+        hearts[4]->sprite->setColor(sf::Color(255, 255, 255, 128));
+    }
+    else if (player->health == 3)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255));
+        }
+
+        hearts[3]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[4]->sprite->setColor(sf::Color(255, 255, 255, 128));
+    }
+    else if (player->health == 2)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255));
+        }
+
+        hearts[2]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[3]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[4]->sprite->setColor(sf::Color(255, 255, 255, 128));
+    }
+    else if (player->health == 1)
+    {
+        for (int i = 0; i < 1; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255));
+        }
+
+        hearts[1]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[2]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[3]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        hearts[4]->sprite->setColor(sf::Color(255, 255, 255, 128));
+    }
+    else
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            hearts[i]->sprite->setColor(sf::Color(255, 255, 255, 128));
+        }
+    }
 
     // annoucementLogic
     if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 0.1 && showAnnoucement)
@@ -205,11 +314,15 @@ void Scene_Play::update()
     if (enemyCount == 0)
     {
 
-        if(wave%5!=0 || wave<5) {
-            spawn=true;
-        } else {
+        if (wave % 5 != 0 || wave < 5)
+        {
+            spawn = true;
+        }
+        else
+        {
             sSelectBuff();
             btnBg->shape->setFillColor(sf::Color(40, 40, 40));
+            bgTitle->text->setString(bgStr);
         }
 
         if (spawn == true)
@@ -218,11 +331,33 @@ void Scene_Play::update()
             b2->text->setString("");
             b3->text->setString("");
             btnBg->shape->setFillColor(sf::Color(40, 40, 40, 0));
+            bgTitle->text->setString("");
 
             spawn = false;
             wave++;
             waveCounter->text->setString("WAVE " + std::to_string(wave));
             sSpawnWaves();
+        }
+
+        // delete control tut
+        if (wave == 2)
+        {
+            for (int i = 0; i < ui.size(); i++)
+            {
+                if (ui[i] == u1)
+                {
+                    delete u1;
+                    ui.erase(ui.begin() + i);
+                }
+            }
+            for (int i = 0; i < ui.size(); i++)
+            {
+                if (ui[i] == u2)
+                {
+                    delete u2;
+                    ui.erase(ui.begin() + i);
+                }
+            }
         }
     }
 
@@ -249,12 +384,20 @@ void Scene_Play::update()
         view.setCenter(sf::Vector2f(WINDOW_W / 2, WINDOW_H / 2));
         window.setView(view);
     }
+
+    // game over
+        if(player->actionTag=="die") {
+        currentScene=scenes["over"];
+        currentScene->init();
+    }
+
 }
 
 void Scene_Play::sSpawnWaves()
 {
 
-    if(wave!=1) {
+    if (wave != 1)
+    {
         showAnnoucement = true;
     }
 
@@ -267,7 +410,7 @@ void Scene_Play::sSpawnWaves()
     }
     else
     {
-        for (int i = 1; i <= wave / i; i++)
+        for (int i = 1; i <= wave / i + 1 ; i++)
         {
             entities.push_back(new Guard);
             entities.push_back(new Warrior);
@@ -279,19 +422,22 @@ void Scene_Play::sSpawnWaves()
 void Scene_Play::sSelectBuff()
 {
 
-    // incPD == increase DMG 
+    // incPD == increase DMG
     // incPH == increase HEALTH
     // incPF == increase FIRERATE
 
-    if(b1->text->getString()=="") {
-    b1->text->setString("incPD");
+    if (b1->text->getString() == "")
+    {
+        b1->text->setString("incPD");
     }
 
-    if(b2->text->getString()=="") {
-    b2->text->setString("incPH");
+    if (b2->text->getString() == "")
+    {
+        b2->text->setString("incPH");
     }
 
-    if(b3->text->getString()=="") {
+    if (b3->text->getString() == "")
+    {
         b3->text->setString("incPF");
     }
 }

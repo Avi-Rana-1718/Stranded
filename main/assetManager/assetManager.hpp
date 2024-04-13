@@ -3,7 +3,7 @@
 // declarations
 std::map<std::string, sf::Texture> m_textures;
 std::map<std::string, sf::Font> m_fonts;
-std::map<std::string, sf::Shader*> m_shaders;
+std::map<std::string, sf::SoundBuffer> m_sounds;
 
 class AssetManager
 {
@@ -11,7 +11,7 @@ class AssetManager
 public:
     void addTexture(std::string);
     void addFont(std::string);
-    void addShader(std::string);
+    void addSound(std::string);
 };
 
 void AssetManager::addTexture(std::string path)
@@ -36,4 +36,16 @@ void AssetManager::addFont(std::string path)
         }
 
         m_fonts[path] = font;
+}
+
+void AssetManager::addSound(std::string path)
+{
+        sf::SoundBuffer s;
+
+        if (!s.loadFromFile("assets/sounds/" + path))
+        {
+            std::cout << "Sound: Not found - " << path << " not found";
+        }
+
+        m_sounds[path] = s;
 }

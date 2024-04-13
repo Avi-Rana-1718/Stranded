@@ -1,30 +1,30 @@
 #include "../_Entity.hpp"
 
 #pragma once
-class HP : public Entity
+class Energy : public Entity
 {
 
 public:
-    HP();
+    Energy();
 
     // functions
     void update(float time);
 
 };
 
-HP::HP()
+Energy::Energy()
 {
 
-    tag="HP";
+    tag="Energy";
     //
     
-    sprite = new CSprite(m_textures["ui/heart.png"]);
+    sprite = new CSprite(m_textures["ui/energy.png"]);
     scale=3.5;
-    sprite->setPosition(-20, -20);
+    sprite->setPosition(-20, -20 + m_textures["ui/heart.png"].getSize().y*scale);
     // sprite->setOrigin(m_textures["ui/heart.png"].getSize().x/2, m_textures["ui/heart.png"].getSize().y/2); 
 }
 
-void HP::update(float time=0)
+void Energy::update(float time=0)
 {
    
 }

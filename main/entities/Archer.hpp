@@ -1,5 +1,5 @@
 #include "_Entity.hpp"
-#include "spells/_Spells.hpp"
+#include "Projectile.hpp"
 #pragma once
 class Archer : public Entity
 {
@@ -58,7 +58,7 @@ Archer::Archer()
     sprite = new CSprite(m_textures["archer/idle0.png"]);
     sprite->setOrigin(m_textures["archer/idle0.png"].getSize().x / 2, m_textures["archer/idle0.png"].getSize().y / 2);
     sprite->setPosition(sf::Vector2f((rand() % WINDOW_W - 100) + 100, (rand() % WINDOW_H - 100) + 100));
-    transform = new CTransform(130, 130);
+    transform = new CTransform(140, 140);
 
     scale = 4;
     actionTag = "idle";
@@ -114,7 +114,7 @@ void Archer::sAttack()
         if (currentFrame == animationMap["attack"].size() - 1)
         {
             lastActionFrame = gameTime.getElapsedTime().asSeconds();
-            Entity *projectile = new Spells(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);
+            Entity *projectile = new Shell(sprite->getPosition().x, sprite->getPosition().y, target->sprite->getPosition().x, target->sprite->getPosition().y, id);
             // projectile->particles->color = sf::Color(32, 178, 170);
             entities.push_back(projectile);
         }

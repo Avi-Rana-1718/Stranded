@@ -26,10 +26,10 @@ Button::Button(std::string label, std::string scene)
     action = scene;
 
     text = new sf::Text;
-    text->setFont(m_fonts["epilogue.ttf"]); // font is a sf::Font
+    text->setFont(m_fonts["epilogue.ttf"]);
     text->setString(label);
     text->setPosition(0, 0);
-    text->setCharacterSize(50); // in pixels, not points!
+    text->setCharacterSize(50);
     text->setFillColor(sf::Color::White);
 }
 
@@ -62,12 +62,18 @@ void Button::listen()
         {
             spawn = true; // enemy/wave spawn set true
             playerProps.projectileDamage++;
+            sound.setBuffer(m_sounds["upgrade.wav"]);
+            sound.play();
         } else if(action == "p_inc_ph") {
             spawn=true;
             playerProps.projectileHealth++;
+            sound.setBuffer(m_sounds["upgrade.wav"]);
+            sound.play();
         } else if (action == "p_inc_pf") {
             spawn=true;
             playerProps.projectileFirerate-=0.1;
+            sound.setBuffer(m_sounds["upgrade.wav"]);
+            sound.play();
         }
         else if (action == "Scene_Play" || action == "Scene_Credits" || action == "Scene_Menu")
         {
@@ -86,11 +92,16 @@ void Button::listen()
             }
 
             currentScene->init();
+        } else if (action=="close") {
+            window.close();
+            isRunning=false;
         }
         else
         {
             std::cout << "ERROR: Unregistered Action" << std::endl;
         }
+            sound.setBuffer(m_sounds["select.wav"]);
+            sound.play();
     }
 }
 

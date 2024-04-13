@@ -34,11 +34,10 @@ Guard::Guard()
     animationMap["idle"].push_back(m_textures["guard/idle3.png"]);
     animationMap["idle"].push_back(m_textures["guard/idle4.png"]);
 
-    animationMap["move"].push_back(m_textures["guard/idle0.png"]);
-    animationMap["move"].push_back(m_textures["guard/idle1.png"]);
-    animationMap["move"].push_back(m_textures["guard/idle2.png"]);
-    animationMap["move"].push_back(m_textures["guard/idle3.png"]);
-    animationMap["move"].push_back(m_textures["guard/idle4.png"]);
+    animationMap["move"].push_back(m_textures["guard/move0.png"]);
+    animationMap["move"].push_back(m_textures["guard/move1.png"]);
+    animationMap["move"].push_back(m_textures["guard/move2.png"]);
+    animationMap["move"].push_back(m_textures["guard/move3.png"]);
 
     animationMap["attack"].push_back(m_textures["guard/attack0.png"]);
     animationMap["attack"].push_back(m_textures["guard/attack1.png"]);
@@ -46,13 +45,15 @@ Guard::Guard()
     animationMap["attack"].push_back(m_textures["guard/attack3.png"]);
     animationMap["attack"].push_back(m_textures["guard/attack4.png"]);
 
+    animationMap["hurt"].push_back(m_textures["guard/hurt.png"]);
+
     animationMap["die"].push_back(m_textures["guard/die0.png"]);
 
 
     sprite = new CSprite(m_textures["guard/idle0.png"]);
     sprite->setPosition(sf::Vector2f((rand() % WINDOW_W - 100) + 100, (rand() % WINDOW_H - 100) + 100));
     sprite->setOrigin(m_textures["guard/idle0.png"].getSize().x/2, m_textures["guard/idle0.png"].getSize().y/2);
-    transform = new CTransform(120, 120);
+    transform = new CTransform(150, 150);
 
     scale = 3.5;
 

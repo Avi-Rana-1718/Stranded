@@ -12,10 +12,9 @@
 class GameEngine
 {
 
-    bool isRunning;
-
 public:
     sf::Event event;
+    sf::Music music;
 
     AssetManager assets;
 
@@ -28,7 +27,7 @@ public:
 GameEngine::GameEngine()
 {
 
-    window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
+    window.create(sf::VideoMode::getDesktopMode(), "Stranded", sf::Style::Fullscreen);
     WINDOW_W = window.getSize().x;
     WINDOW_H = window.getSize().y;
 
@@ -51,12 +50,18 @@ GameEngine::GameEngine()
     assets.addTexture("guard/idle3.png");
     assets.addTexture("guard/idle4.png");
 
+    assets.addTexture("guard/move0.png");
+    assets.addTexture("guard/move1.png");
+    assets.addTexture("guard/move2.png");
+    assets.addTexture("guard/move3.png");
+
     assets.addTexture("guard/attack0.png");
     assets.addTexture("guard/attack1.png");
     assets.addTexture("guard/attack2.png");
     assets.addTexture("guard/attack3.png");
     assets.addTexture("guard/attack4.png");
 
+    assets.addTexture("guard/hurt.png");
     assets.addTexture("guard/die0.png");
 
     assets.addTexture("warrior/idle0.png");
@@ -97,44 +102,36 @@ GameEngine::GameEngine()
     assets.addTexture("archer/hurt.png");
     assets.addTexture("archer/die.png");
 
-    assets.addTexture("spells/explosion/0.png");
-    assets.addTexture("spells/explosion/1.png");
-    assets.addTexture("spells/explosion/2.png");
-    assets.addTexture("spells/explosion/3.png");
-    assets.addTexture("spells/explosion/4.png");
-    assets.addTexture("spells/explosion/5.png");
-    assets.addTexture("spells/explosion/6.png");
-    assets.addTexture("spells/explosion/7.png");
-    assets.addTexture("spells/explosion/8.png");
-    assets.addTexture("spells/explosion/9.png");
-    assets.addTexture("spells/explosion/10.png");
-
-    assets.addTexture("ui/hp.png");
-    assets.addTexture("ui/mp.png");
+    assets.addTexture("shell/explosion/0.png");
 
     assets.addTexture("ui/heart.png");
-    assets.addTexture("ui/empty_heart.png");
-
-    assets.addTexture("ui/mana.png");
-    assets.addTexture("ui/empty_mana.png");
+    assets.addTexture("ui/energy.png");
 
     assets.addTexture("map.png");
-    assets.addTexture("ui/bar_blue_mid.png");
+    assets.addTexture("ship.png");
 
-    assets.addFont("noto.ttf");
-    assets.addFont("singleday.ttf");
+    assets.addTexture("ui/inputs/mouse_left.png");
+    assets.addTexture("ui/inputs/keyboard_arrows_all.png");
+
     assets.addFont("epilogue.ttf");
     assets.addFont("technicality.ttf");
+    assets.addFont("technicality1.ttf");
 
     assets.addTexture("gun.png");
     assets.addTexture("crosshair.png");
 
-  scenes["menu"] = new Scene_Menu;
+    assets.addSound("hurt.wav");
+    assets.addSound("shot.wav");
+    assets.addSound("upgrade.wav");
+    assets.addSound("select.wav");
+
+
+    scenes["menu"] = new Scene_Menu;
     scenes["play"] = new Scene_Play;
     scenes["credits"] = new Scene_Credits;
     scenes["over"] = new Scene_Over;
 
-    currentScene = scenes["play"];
+    currentScene = scenes["menu"];
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
@@ -142,6 +139,14 @@ GameEngine::GameEngine()
     view.setCenter(sf::Vector2f(WINDOW_W / 2, WINDOW_H / 2));
     view.setSize(sf::Vector2f(WINDOW_W, WINDOW_H));
     window.setView(view);
+
+    if (!music.openFromFile("./assets/dos88.ogg"))
+    {
+        std::cout << "ASSET: DOS88 NOT FOUND\n";
+    }
+    music.setVolume(50);
+    music.setLoop(true);
+    music.play();
 }
 
 void GameEngine::run()

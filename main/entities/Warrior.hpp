@@ -65,7 +65,7 @@ Warrior::Warrior()
     sprite = new CSprite(m_textures["warrior/idle0.png"]);
     sprite->setPosition(sf::Vector2f((rand() % WINDOW_W - 100) + 100, (rand() % WINDOW_H - 100) + 100));
     sprite->setOrigin(m_textures["warrior/idle0.png"].getSize().x / 2, m_textures["warrior/idle0.png"].getSize().y / 2);
-    transform = new CTransform(150, 150);
+    transform = new CTransform(170, 170);
 
     scale = 4;
 
