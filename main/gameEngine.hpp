@@ -140,7 +140,7 @@ GameEngine::GameEngine()
     scenes["credits"] = new Scene_Credits;
     scenes["over"] = new Scene_Over;
 
-    currentScene = scenes["menu"];
+    currentScene = scenes["play"];
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;

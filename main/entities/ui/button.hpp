@@ -64,16 +64,19 @@ void Button::listen()
             playerProps.projectileDamage++;
             sound.setBuffer(m_sounds["upgrade.wav"]);
             sound.play();
+            return;
         } else if(action == "p_inc_ph") {
             spawn=true;
             playerProps.projectileHealth++;
             sound.setBuffer(m_sounds["upgrade.wav"]);
             sound.play();
+            return;
         } else if (action == "p_inc_pf") {
             spawn=true;
             playerProps.projectileFirerate-=0.1;
             sound.setBuffer(m_sounds["upgrade.wav"]);
             sound.play();
+            return;
         }
         else if (action == "Scene_Play" || action == "Scene_Credits" || action == "Scene_Menu")
         {
