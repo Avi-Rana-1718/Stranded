@@ -140,7 +140,8 @@ GameEngine::GameEngine()
     scenes["credits"] = new Scene_Credits;
     scenes["over"] = new Scene_Over;
 
-    currentScene = scenes["play"];
+    currentScene = scenes["menu"];
+    switching=false;
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
@@ -189,6 +190,7 @@ void GameEngine::run()
             }
         }
 
+        if(switching==false)
         currentScene->run(time.asSeconds());
     }
 }

@@ -94,8 +94,12 @@ void Scene_Menu::run(float time)
 void Scene_Menu::update()
 {
 
-    for(auto& entity : ui) {
+    for(auto entity : ui) {
+        std::cout<<"In update loop menu";
+        if(entity!=NULL) {
         entity->update(deltaTime);
+        std::cout<<entity->tag<<std::endl;
+        }
     }
 }
 

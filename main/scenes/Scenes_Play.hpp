@@ -47,7 +47,7 @@ public:
 void Scene_Play::init()
 {
 
-
+    std::cout<<"In scneplay"<<std::endl;
     Scenes::init();
     // window.setMouseCursorVisible(false);
 
@@ -184,19 +184,31 @@ void Scene_Play::init()
     // background
     bg = new Background;
     background.push_back(bg);
+
+        std::cout<<"End scneplay"<<std::endl;
+
 }
 
 void Scene_Play::run(float time)
 {
+
+    std::cout<<"In run"<<std::endl;
+
     deltaTime = time;
 
     update();
     sRender();
     sEntityUpdate();
+
+        std::cout<<"out run"<<std::endl;
+
     }
 
 void Scene_Play::update()
 {
+
+        std::cout<<"in update"<<std::endl;
+
 
     par->particles->update(-10, -10);
 
@@ -392,6 +404,9 @@ void Scene_Play::update()
         currentScene=scenes["over"];
         currentScene->init();
     }
+
+        std::cout<<"Out scneplay"<<std::endl;
+
 
 }
 

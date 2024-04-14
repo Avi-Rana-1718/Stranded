@@ -22,7 +22,7 @@ public:
 void Scenes::init() {
         ui.erase(ui.begin(), ui.end());
         entities.erase(entities.begin(), entities.end());
-        background.erase(background.begin(), background.end());
+        // background.erase(background.begin(), background.end());
 }
 
 Scenes::~Scenes()
