@@ -49,7 +49,18 @@ void Scene_Play::init()
 
 
     Scenes::init();
-    window.setMouseCursorVisible(false);
+    // window.setMouseCursorVisible(false);
+
+    
+    // crosshair
+    crosshair = new Crosshair;
+    ui.push_back(crosshair);
+
+    // entities
+    player = new Player;
+    entities.push_back(player);
+    entities.push_back(new Gun(player));
+
 
     wave = 0;
     score = 0;
@@ -140,15 +151,6 @@ void Scene_Play::init()
     b3->text->setPosition(WINDOW_W * 3 / 3 - 400, WINDOW_H / 2);
     ui.push_back(b3);
 
-    // crosshair
-    crosshair = new Crosshair;
-    ui.push_back(crosshair);
-
-    // entities
-    player = new Player;
-    entities.push_back(player);
-    entities.push_back(new Gun(player));
-
     // mouse & keyboard
 
     u2 = new Entity;
@@ -199,7 +201,7 @@ void Scene_Play::update()
     par->particles->update(-10, -10);
 
     // change crosshair position
-    crosshair->sprite->setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+    // crosshair->sprite->setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
     // change/set score
     scoreCounter->text->setString("SCORE " + std::to_string(score));

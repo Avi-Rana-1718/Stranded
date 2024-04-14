@@ -16,6 +16,8 @@ public:
     sf::Event event;
     sf::Music music;
 
+    sf::Image icon;
+
     AssetManager assets;
 
     GameEngine();
@@ -30,6 +32,13 @@ GameEngine::GameEngine()
     window.create(sf::VideoMode::getDesktopMode(), "Stranded", sf::Style::Fullscreen);
     WINDOW_W = window.getSize().x;
     WINDOW_H = window.getSize().y;
+
+
+    //load icon
+    if(!icon.loadFromFile("./assets/icon.png")) {
+        std::cout<<"ICON: NOT FOUND";
+    }
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     assets.addTexture("player/idle0.png");
     assets.addTexture("player/idle1.png");
@@ -153,7 +162,7 @@ void GameEngine::run()
 {
     currentScene->init();
 
-    while (isRunning && currentScene != NULL)
+    while (isRunning)
     {
 
         sf::Time time = Clock.restart();
@@ -161,11 +170,13 @@ void GameEngine::run()
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
-            window.create(sf::VideoMode::getDesktopMode(), "Dice wizard");
+            window.create(sf::VideoMode::getDesktopMode(), "Stranded");
+            window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F11))
         {
-            window.create(sf::VideoMode::getDesktopMode(), "Dice wizard", sf::Style::Fullscreen);
+            window.create(sf::VideoMode::getDesktopMode(), "Stranded", sf::Style::Fullscreen);
+            window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
         }
 
         while (window.pollEvent(event))

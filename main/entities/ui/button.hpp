@@ -79,7 +79,7 @@ void Button::listen()
         {
             if (action == "Scene_Play")
             {
-                delete currentScene;
+                // delete currentScene;
                 currentScene = scenes["play"];
             }
             else if (action == "Scene_Menu")

@@ -1,7 +1,6 @@
 #include "../entities/_Entity.hpp"
 
 #include "../entities/ui/button.hpp"
-#include "../entities/bg/map.hpp"
 
 #pragma once
 
