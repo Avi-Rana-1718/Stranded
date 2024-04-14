@@ -16,7 +16,7 @@ public:
     Entity *player, *crosshair, *par;
 
     std::vector<Entity *> hearts;
-    Entity* energy;
+    Entity *energy;
 
     // ui elements
     Entity *waveCounter;
@@ -47,20 +47,14 @@ public:
 void Scene_Play::init()
 {
 
-    std::cout<<"In scneplay"<<std::endl;
+    std::cout << "In scneplay" << std::endl;
     Scenes::init();
-    // window.setMouseCursorVisible(false);
-
-    
-    // crosshair
-    crosshair = new Crosshair;
-    ui.push_back(crosshair);
+    window.setMouseCursorVisible(false);
 
     // entities
     player = new Player;
     entities.push_back(player);
     entities.push_back(new Gun(player));
-
 
     wave = 0;
     score = 0;
@@ -123,7 +117,7 @@ void Scene_Play::init()
     btnBg = new Entity;
     btnBg->shape = new sf::RectangleShape(sf::Vector2f(WINDOW_W + 200, WINDOW_H / 2.5));
     btnBg->shape->setPosition(-100, WINDOW_H / 3);
-    btnBg->shape->setFillColor(sf::Color(40, 40, 40));
+    btnBg->shape->setFillColor(sf::Color(40, 40, 40, 0));
     btnBg->shape->setRotation(-2);
     ui.push_back(btnBg);
 
@@ -131,7 +125,7 @@ void Scene_Play::init()
     bgTitle->text = new sf::Text;
     bgTitle->text->setFont(m_fonts["epilogue.ttf"]);
     bgTitle->text->setString("Select powerup");
-    bgTitle->text->setOutlineColor(sf::Color(40, 40, 40));
+    bgTitle->text->setOutlineColor(sf::Color(40, 40, 40, 0));
     bgTitle->text->setOutlineThickness(1.5);
     bgTitle->text->setCharacterSize(50);
     bgTitle->text->setOrigin(bgTitle->text->getGlobalBounds().getSize().x / 2, bgTitle->text->getGlobalBounds().getSize().y / 2);
@@ -185,14 +179,15 @@ void Scene_Play::init()
     bg = new Background;
     background.push_back(bg);
 
-        std::cout<<"End scneplay"<<std::endl;
+    // crosshair
+    crosshair = new Crosshair;
+    ui.push_back(crosshair);
+
 
 }
 
 void Scene_Play::run(float time)
 {
-
-    std::cout<<"In run"<<std::endl;
 
     deltaTime = time;
 
@@ -200,20 +195,15 @@ void Scene_Play::run(float time)
     sRender();
     sEntityUpdate();
 
-        std::cout<<"out run"<<std::endl;
-
-    }
+}
 
 void Scene_Play::update()
 {
 
-        std::cout<<"in update"<<std::endl;
-
-
     par->particles->update(-10, -10);
 
     // change crosshair position
-    // crosshair->sprite->setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+    crosshair->sprite->setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
 
     // change/set score
     scoreCounter->text->setString("SCORE " + std::to_string(score));
@@ -400,14 +390,18 @@ void Scene_Play::update()
     }
 
     // game over
-        if(player->actionTag=="die") {
-        currentScene=scenes["over"];
+    if (player->actionTag == "die")
+    {
+        currentScene = scenes["over"];
         currentScene->init();
     }
 
-        std::cout<<"Out scneplay"<<std::endl;
-
-
+    if (nextScene != NULL)
+    {
+        currentScene = nextScene;
+        nextScene=NULL;
+        currentScene->init();
+    }
 }
 
 void Scene_Play::sSpawnWaves()
@@ -427,7 +421,7 @@ void Scene_Play::sSpawnWaves()
     }
     else
     {
-        for (int i = 1; i <= wave / i + 1 ; i++)
+        for (int i = 1; i <= wave / i + 1; i++)
         {
             entities.push_back(new Guard);
             entities.push_back(new Warrior);

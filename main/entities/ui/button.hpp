@@ -80,26 +80,20 @@ void Button::listen()
         }
         else if (action == "Scene_Play" || action == "Scene_Credits" || action == "Scene_Menu")
         {
-            switching=true;
-            std::cout<<"switchomg";
             if (action == "Scene_Play")
             {
-                delete currentScene;
-                currentScene = scenes["play"];
+                nextScene = scenes["play"];
             }
             else if (action == "Scene_Menu")
             {
-                currentScene = scenes["menu"];
+                nextScene = scenes["menu"];
             }
             else if (action == "Scene_Credits")
             {
-                currentScene = scenes["credits"];
+                nextScene = scenes["credits"];
             } else {
                 std::cout<<"ERROR: Scene switch";
             }
-
-            currentScene->init();
-            switching=false;
         } else if (action=="close") {
             window.close();
             isRunning=false;

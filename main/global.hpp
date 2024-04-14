@@ -14,7 +14,6 @@ int shake;
 int score=0;
 int wave=0;
 bool spawn=true;
-bool switching=true;
 
 int WINDOW_W=100;
 int WINDOW_H=720;
@@ -41,3 +40,4 @@ std::vector<Entity *> background;
 std::map<std::string, Scenes *> scenes;
 
 Scenes *currentScene = NULL;
+Scenes *nextScene = NULL;

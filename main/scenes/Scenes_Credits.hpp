@@ -60,4 +60,12 @@ void Scene_Credits::update()
     for(auto& entity : ui) {
         entity->update(deltaTime);
     }
+
+            if(nextScene!=NULL) {
+        currentScene=nextScene;
+        nextScene=NULL;
+        currentScene->init();
+        
+    }
+
 }

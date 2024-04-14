@@ -24,33 +24,31 @@ void Scene_Menu::init()
     Scenes::init();
     window.setMouseCursorVisible(true);
 
-
-    Entity* title = new Entity;
+    Entity *title = new Entity;
     title->text = new sf::Text;
     title->text->setFont(m_fonts["technicality1.ttf"]);
     title->text->setCharacterSize(80);
     title->text->setFillColor(sf::Color::White);
     title->text->setString("STRANDED");
-    title->text->setPosition(50, WINDOW_H/2-200);
+    title->text->setPosition(50, WINDOW_H / 2 - 200);
     ui.push_back(title);
 
-    Entity* temp = new Button("Start", "Scene_Play");
-    temp->text->setPosition(50, WINDOW_H/2);
+    Entity *temp = new Button("Start", "Scene_Play");
+    temp->text->setPosition(50, WINDOW_H / 2);
     ui.push_back(temp);
 
-    Entity* temp2 = new Button("Credits", "Scene_Credits");
-    temp2->text->setPosition(50, WINDOW_H/2 + 80);
+    Entity *temp2 = new Button("Credits", "Scene_Credits");
+    temp2->text->setPosition(50, WINDOW_H / 2 + 80);
     ui.push_back(temp2);
 
     temp2 = new Button("Exit", "close");
-    temp2->text->setPosition(50, WINDOW_H/2 + 160);
+    temp2->text->setPosition(50, WINDOW_H / 2 + 160);
     ui.push_back(temp2);
 
-
-    Entity* ship = new Entity;
+    Entity *ship = new Entity;
     ship->sprite = new CSprite(m_textures["ship.png"]);
-    ship->scale=5;
-    ship->sprite->setPosition(WINDOW_W-ship->sprite->getGlobalBounds().getSize().x*ship->scale-100, WINDOW_H/2);
+    ship->scale = 5;
+    ship->sprite->setPosition(WINDOW_W - ship->sprite->getGlobalBounds().getSize().x * ship->scale - 100, WINDOW_H / 2);
     ui.push_back(ship);
 
     temp = new Entity;
@@ -68,16 +66,14 @@ void Scene_Menu::init()
     temp->text->setCharacterSize(20);
     temp->text->setFillColor(sf::Color::White);
     temp->text->setString("Resolution: " + std::to_string(WINDOW_W) + "x" + std::to_string(WINDOW_H) + "\nTarget FPS: 144");
-    temp->text->setPosition(WINDOW_W- 10 - temp->text->getGlobalBounds().getSize().x, 10);
+    temp->text->setPosition(WINDOW_W - 10 - temp->text->getGlobalBounds().getSize().x, 10);
     ui.push_back(temp);
 
     par = new Entity;
     par->particles = new ParticleSystem(WINDOW_W, WINDOW_W);
     ui.push_back(par);
 
-
     par->particles->update(0, 0);
-
 }
 
 void Scene_Menu::run(float time)
@@ -87,22 +83,29 @@ void Scene_Menu::run(float time)
     update();
     sRender();
 
-
-    par->particles->update(0, 0); 
+    par->particles->update(0, 0);
 }
 
 void Scene_Menu::update()
 {
 
-    for(auto entity : ui) {
-        std::cout<<"In update loop menu";
-        if(entity!=NULL) {
-        entity->update(deltaTime);
-        std::cout<<entity->tag<<std::endl;
+    for (auto entity : ui)
+    {
+        if (entity != NULL)
+        {
+            entity->update(deltaTime);
         }
+    }
+
+    if (nextScene != NULL)
+    {
+        currentScene = nextScene;
+        nextScene=NULL;
+        currentScene->init();
     }
 }
 
-Scene_Menu::~Scene_Menu() {
+Scene_Menu::~Scene_Menu()
+{
     delete par;
 }

@@ -141,7 +141,6 @@ GameEngine::GameEngine()
     scenes["over"] = new Scene_Over;
 
     currentScene = scenes["menu"];
-    switching=false;
     window.setFramerateLimit(144);
     isRunning = true;
     totalFrames = 0;
@@ -190,7 +189,6 @@ void GameEngine::run()
             }
         }
 
-        if(switching==false)
         currentScene->run(time.asSeconds());
     }
 }

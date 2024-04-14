@@ -95,7 +95,6 @@ void Entity::sAnimate()
         sprite->setTexture(animationMap[actionTag][0]);
         animationTimer = gameTime.getElapsedTime().asSeconds();
         score++;
-        std::cout<<score<<std::endl;
         return;
     }
 

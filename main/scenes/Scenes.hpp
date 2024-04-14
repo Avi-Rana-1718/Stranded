@@ -6,7 +6,6 @@ class Scenes
 {
 
 public:
-
     ~Scenes();
 
     float deltaTime;
@@ -14,15 +13,15 @@ public:
     // functions
     virtual void init();
     virtual void run(float time);
-
     void sRender();
     void sEntityUpdate();
 };
 
-void Scenes::init() {
-        ui.erase(ui.begin(), ui.end());
-        entities.erase(entities.begin(), entities.end());
-        // background.erase(background.begin(), background.end());
+void Scenes::init()
+{
+    ui.erase(ui.begin(), ui.end());
+    entities.erase(entities.begin(), entities.end());
+    background.erase(background.begin(), background.end());
 }
 
 Scenes::~Scenes()
@@ -75,14 +74,6 @@ void Scenes::sRender()
         {
             window.draw(*(entity->text));
         }
-
-        // sf::FloatRect bounds = entity->sprite->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Red);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
     }
 
     // ui
@@ -91,31 +82,26 @@ void Scenes::sRender()
         if (entity->sprite != NULL)
         {
             entity->sprite->setScale(sf::Vector2f(entity->rotate * entity->scale, entity->scale));
-            window.draw(*(entity->sprite));            
+            window.draw(*(entity->sprite));
         }
-        if(entity->particles!=NULL) {
+        if (entity->particles != NULL)
+        {
             window.draw(entity->particles->vertices);
         }
-        if(entity->shape!=NULL) {
+        if (entity->shape != NULL)
+        {
             window.draw(*entity->shape);
-        //             sf::FloatRect bounds = entity->shape->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Red);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
-        }   
+        }
         if (entity->text != NULL)
         {
             window.draw(*(entity->text));
-        //             sf::FloatRect bounds = entity->text->getGlobalBounds();
-        // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-        // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-        // boundsRect.setFillColor(sf::Color::Transparent);
-        // boundsRect.setOutlineColor(sf::Color::Green);
-        // boundsRect.setOutlineThickness(2.f);
-        // window.draw(boundsRect);
+            // sf::FloatRect bounds = entity->text->getGlobalBounds();
+            // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
+            // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
+            // boundsRect.setFillColor(sf::Color::Transparent);
+            // boundsRect.setOutlineColor(sf::Color::Green);
+            // boundsRect.setOutlineThickness(2.f);
+            // window.draw(boundsRect);
         }
     }
 
