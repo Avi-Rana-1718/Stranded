@@ -14,6 +14,8 @@ int shake;
 int score=0;
 int wave=0;
 bool spawn=true;
+float gameSpeed=1;
+
 
 int WINDOW_W=100;
 int WINDOW_H=720;
@@ -23,6 +25,7 @@ struct playerProperties {
     float projectileHealth;
     float projectileLifetime;
     float projectileFirerate;
+    float slowmoTime;
 };
 
 struct playerProperties playerProps;

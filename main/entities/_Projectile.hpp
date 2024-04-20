@@ -1,7 +1,7 @@
 class Projectile {
     public:
     int ownerID;
-    int dmg;
+    float dmg;
     int projectileHealth;
     int knockback;
     int lifetime;

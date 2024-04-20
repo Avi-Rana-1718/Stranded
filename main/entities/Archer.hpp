@@ -88,7 +88,7 @@ void Archer::sMove()
         float dy = target->sprite->getPosition().y - sprite->getPosition().y;
 
         float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
-        sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
+        sprite->move((dx / l) * deltaTime * transform->speedX*gameSpeed, (dy / l) * deltaTime * transform->speedY*gameSpeed);
     }
 
     if (target->sprite->getPosition().x - sprite->getPosition().x > 0)
@@ -109,7 +109,7 @@ void Archer::sAttack()
     rec.setOrigin(sf::Vector2f(rec.getSize().x / 2, rec.getSize().y / 2));
     rec.setPosition(this->sprite->getPosition().x, this->sprite->getPosition().y);
 
-    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && rec.getGlobalBounds().intersects(target->sprite->getGlobalBounds()))
+    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1 && rec.getGlobalBounds().intersects(target->sprite->getGlobalBounds()) && target->actionTag!="die")
     {
         if (currentFrame == animationMap["attack"].size() - 1)
         {

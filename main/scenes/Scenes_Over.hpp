@@ -81,6 +81,7 @@ void Scene_Over::update()
     if (nextScene != NULL)
     {
         currentScene = nextScene;
+        nextScene=NULL;
         currentScene->init();
     }
 }

@@ -19,7 +19,7 @@ public:
     int id;
     int layer;
 
-    int health;
+    float health;
 
     float lastActionFrame;
     float scale;
@@ -47,7 +47,7 @@ public:
     virtual void update(float time);
     virtual void sAnimate();
 
-    virtual void hurt(int dmg);
+    virtual void hurt(float dmg);
 };
 
 Entity::Entity()
@@ -140,7 +140,7 @@ void Entity::sAnimate()
     }
 }
 
-void Entity::hurt(int dmg)
+void Entity::hurt(float dmg)
 {
     if(isInvulnerable==false) {
     health -= dmg;
@@ -152,6 +152,7 @@ void Entity::hurt(int dmg)
     }
 
     sound.setBuffer(m_sounds["hurt.wav"]);
+    sound.setPitch(gameSpeed);
     sound.play();   
 
     }

@@ -71,10 +71,10 @@ void update(int x, int y) {
             particles[i].lifetime--;
         }
 
-    vertices[4*i + 0].position += particles[i].velocity;
-    vertices[4*i + 1].position += particles[i].velocity;
-    vertices[4*i + 2].position += particles[i].velocity;
-    vertices[4*i + 3].position += particles[i].velocity;  
+    vertices[4*i + 0].position += particles[i].velocity*gameSpeed;
+    vertices[4*i + 1].position += particles[i].velocity*gameSpeed;
+    vertices[4*i + 2].position += particles[i].velocity*gameSpeed;
+    vertices[4*i + 3].position += particles[i].velocity*gameSpeed;  
     }
 }
 };

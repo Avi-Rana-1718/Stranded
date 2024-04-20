@@ -6,7 +6,8 @@ class Shell : public Entity, public Projectile
 public:
     Entity *lastTarget;
 
-    Shell(float originX, float originY, float targetX, float targetY, int id, int damage, int phealth, int life);
+    Shell(float originX, float originY, float targetX, float targetY, int id, float damage, int phealth, int life);
+    std::vector<sf::Color> colors;
 
     void update(float time);
     // void sAnimate();
@@ -15,7 +16,7 @@ public:
     void Collide();
 };
 
-Shell::Shell(float originX, float originY, float targetX, float targetY, int id, int damage = 1, int phealth = 1, int life = 2)
+Shell::Shell(float originX, float originY, float targetX, float targetY, int id, float damage = 1, int phealth = 1, int life = 2)
 {
     hatesPlayer = false;
     isProjectile = true;
@@ -44,7 +45,16 @@ Shell::Shell(float originX, float originY, float targetX, float targetY, int id,
 
     scale = 1;
 
+    colors.push_back(sf::Color(132,224,107));
+    colors.push_back(sf::Color(255,255,255));
+    colors.push_back(sf::Color(107,210,224));
+    colors.push_back(sf::Color(229,116,0));
+
+    sprite->setColor(colors[std::rand()%4]);
+  
+
     sound.setBuffer(m_sounds["shot.wav"]);
+    sound.setPitch(gameSpeed);
     sound.play();
 }
 
@@ -54,7 +64,7 @@ void Shell::update(float time)
     deltaTime = time;
     sMove();
 
-    if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 1)
+    if (gameTime.getElapsedTime().asSeconds()*gameSpeed > lastActionFrame + 1)
     {
         lastActionFrame = gameTime.getElapsedTime().asSeconds();
         lifetime--;
@@ -73,7 +83,7 @@ void Shell::update(float time)
 
 void Shell::sMove()
 {
-    sprite->move(transform->speedX * deltaTime, transform->speedY * deltaTime);
+    sprite->move(transform->speedX * deltaTime*gameSpeed, transform->speedY * deltaTime*gameSpeed);
 }
 
 void Shell::Collide()

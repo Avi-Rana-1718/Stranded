@@ -8,6 +8,8 @@
 #include "../entities/ui/heart.hpp"
 #include "../entities/ui/energy.hpp"
 #include "../entities/ui/crosshair.hpp"
+#include "../entities/ui/menu.hpp"
+
 #pragma once
 
 class Scene_Play : public Scenes
@@ -16,7 +18,8 @@ public:
     Entity *player, *crosshair, *par;
 
     std::vector<Entity *> hearts;
-    Entity *energy;
+    std::vector<Entity *> energy;
+
 
     // ui elements
     Entity *waveCounter;
@@ -32,6 +35,8 @@ public:
     // announcementConfig
     bool showAnnoucement;
     std::string msg = "WAVE CLEARED!";
+
+    bool playerDied;
 
     float lastActionFrame;
 
@@ -50,6 +55,8 @@ void Scene_Play::init()
     std::cout << "In scneplay" << std::endl;
     Scenes::init();
     window.setMouseCursorVisible(false);
+
+    playerDied=false;
 
     // entities
     player = new Player;
@@ -86,7 +93,7 @@ void Scene_Play::init()
 
     annoucementText = new Entity;
     annoucementText->text = new sf::Text;
-    annoucementText->text->setFont(m_fonts["technicality.ttf"]);
+    annoucementText->text->setFont(m_fonts["technicality1.ttf"]);
     annoucementText->text->setString("Wave cleared");
     annoucementText->text->setOutlineColor(sf::Color(40, 40, 40));
     annoucementText->text->setOutlineThickness(1.5);
@@ -103,6 +110,15 @@ void Scene_Play::init()
         int intend = (i == 0) ? 0 : 20;
         temp->sprite->move((temp->sprite->getGlobalBounds().getSize().x * temp->scale * i) - intend * i, 0);
         hearts.push_back(temp);
+        ui.push_back(temp);
+    }
+
+     for (int i = 0; i < 3; i++)
+    {
+        Entity *temp = new Energy;
+        int intend = 10;
+        temp->sprite->move((temp->sprite->getGlobalBounds().getSize().x * temp->scale * i) - intend * i + 15, hearts[0]->sprite->getGlobalBounds().getSize().y-10);
+        energy.push_back(temp);
         ui.push_back(temp);
     }
 
@@ -266,6 +282,18 @@ void Scene_Play::update()
         }
     }
 
+    // energy 
+    if(playerProps.slowmoTime>0) {
+        for(int i=0;i<energy.size();i++) {
+            energy[i]->sprite->setColor(sf::Color(255, 255, 255,255));
+        }
+    } else {
+        for(int i=0;i<energy.size();i++) {
+            energy[i]->sprite->setColor(sf::Color(255, 255, 255, 55));
+        }
+    }
+
+
     // annoucementLogic
     if (gameTime.getElapsedTime().asSeconds() > lastActionFrame + 0.1 && showAnnoucement)
     {
@@ -390,10 +418,15 @@ void Scene_Play::update()
     }
 
     // game over
-    if (player->actionTag == "die")
+    if (player->actionTag == "die" && playerDied==false)
     {
-        currentScene = scenes["over"];
-        currentScene->init();
+    playerDied=true;
+    Entity* temp = new Menu("Waves survived: " + std::to_string(wave) + "\nEnemies killed: " + std::to_string(score), "You died!" ,3);
+    ui.push_back(temp);
+    
+    crosshair = new Crosshair;
+    ui.push_back(crosshair);
+
     }
 
     if (nextScene != NULL)

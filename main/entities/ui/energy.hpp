@@ -19,7 +19,7 @@ Energy::Energy()
     //
     
     sprite = new CSprite(m_textures["ui/energy.png"]);
-    scale=3.5;
+    scale=2.5;
     sprite->setPosition(-20, -20 + m_textures["ui/heart.png"].getSize().y*scale);
     // sprite->setOrigin(m_textures["ui/heart.png"].getSize().x/2, m_textures["ui/heart.png"].getSize().y/2); 
 }

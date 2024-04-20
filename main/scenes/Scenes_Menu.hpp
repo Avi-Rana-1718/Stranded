@@ -1,6 +1,7 @@
 #include "../entities/_Entity.hpp"
 
 #include "../entities/ui/button.hpp"
+#include "../entities/ui/menu.hpp"
 
 #pragma once
 
@@ -71,7 +72,12 @@ void Scene_Menu::init()
 
     par = new Entity;
     par->particles = new ParticleSystem(WINDOW_W, WINDOW_W);
-    ui.push_back(par);
+    ui.push_back(par);    
+
+    // temp = new Menu("You died!\nWave: 1\nScore:1", 3);
+    // temp->shape->setPosition(WINDOW_W/2, WINDOW_H/2);
+    // temp->text->setPosition(WINDOW_W/2, WINDOW_H/2);
+    // ui.push_back(temp);
 
     par->particles->update(0, 0);
 }

@@ -8,7 +8,7 @@ public:
     Player();
 
 
-    float dashActionFrame;
+    float slowActionFrame;
     float lastDashFrame;
 
     // functions
@@ -28,12 +28,13 @@ Player::Player()
     playerProps.projectileHealth = 1;
     playerProps.projectileLifetime = 3;
     playerProps.projectileFirerate = 0.8;
+    playerProps.slowmoTime=5;
 
     frameDelay = 0.2;
     animationTimer = 0;
     currentFrame = 0;
     lastActionFrame = 0;
-    dashActionFrame =-5;
+    slowActionFrame =0;
     lastDashFrame=0;
 
     //
@@ -70,6 +71,11 @@ void Player::update(float time)
         sInput();
         sAnimate();
     }
+
+    if(gameSpeed!=1 && gameTime.getElapsedTime().asSeconds()>slowActionFrame + 1) {
+        slowActionFrame=gameTime.getElapsedTime().asSeconds();
+        playerProps.slowmoTime--;
+    }
 }
 
 void Player::sInput()
@@ -103,18 +109,20 @@ void Player::sInput()
         entities.push_back(projectile);
     }
 
-    // dash
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && gameTime.getElapsedTime().asSeconds() > dashActionFrame + 1)
-    {
-        float dx = sf::Mouse::getPosition(window).x - sprite->getPosition().x;
-        float dy = sf::Mouse::getPosition(window).y - sprite->getPosition().y;
-
-        float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
-
-        sprite->move(dx / l * 12000 * deltaTime, dy / l * 12000 * deltaTime);
-
-            if(gameTime.getElapsedTime().asSeconds()==dashActionFrame) {
-        dashActionFrame=gameTime.getElapsedTime().asSeconds()+3;
+    if(playerProps.slowmoTime>0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        gameSpeed=0.3;
     }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
+        gameSpeed=1;
     }
+    // // dash
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    // {
+    //     float dx = sf::Mouse::getPosition(window).x - sprite->getPosition().x;
+    //     float dy = sf::Mouse::getPosition(window).y - sprite->getPosition().y;
+
+    //     float l = pow(pow(dx, 2) + pow(dy, 2), 0.5);
+
+    //     sprite->move(dx / l * transform->speedX*2 * deltaTime, dy / l * transform->speedY*2 * deltaTime);
+    // }
 }

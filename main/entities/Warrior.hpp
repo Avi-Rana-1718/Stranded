@@ -108,7 +108,7 @@ void Warrior::sMove()
 
         if (f)
         {
-            sprite->move((dx / l) * deltaTime * transform->speedX, (dy / l) * deltaTime * transform->speedY);
+            sprite->move((dx / l) * deltaTime * transform->speedX*gameSpeed, (dy / l) * deltaTime * transform->speedY*gameSpeed);
         }
     }
 }
@@ -125,7 +125,7 @@ void Warrior::sAttack()
         rotate = -1;
     }
 
-    if (actionTag == "attack" && currentFrame == animationMap["attack"].size() - 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()) && gameTime.getElapsedTime().asSeconds() > lastActionFrame)
+    if (actionTag == "attack" && currentFrame == animationMap["attack"].size() - 1 && sprite->getGlobalBounds().intersects(target->sprite->getGlobalBounds()) && gameTime.getElapsedTime().asSeconds() > lastActionFrame && target->actionTag!="die")
     {
         target->hurt(attackDmg);
         lastActionFrame = gameTime.getElapsedTime().asSeconds() + 1;

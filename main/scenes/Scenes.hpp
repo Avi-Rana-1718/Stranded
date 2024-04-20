@@ -95,13 +95,6 @@ void Scenes::sRender()
         if (entity->text != NULL)
         {
             window.draw(*(entity->text));
-            // sf::FloatRect bounds = entity->text->getGlobalBounds();
-            // sf::RectangleShape boundsRect(sf::Vector2f(bounds.width, bounds.height));
-            // boundsRect.setPosition(sf::Vector2f(bounds.getPosition().x, bounds.getPosition().y));
-            // boundsRect.setFillColor(sf::Color::Transparent);
-            // boundsRect.setOutlineColor(sf::Color::Green);
-            // boundsRect.setOutlineThickness(2.f);
-            // window.draw(boundsRect);
         }
     }
 
@@ -112,7 +105,7 @@ void Scenes::sEntityUpdate()
 {
     for (int i = 0; i < entities.size(); i++)
     {
-        if (entities[i]->actionTag == "die" && gameTime.getElapsedTime().asSeconds() > entities[i]->animationTimer + entities[i]->frameDelay)
+        if (entities[i]->actionTag == "die" && gameTime.getElapsedTime().asSeconds() > entities[i]->animationTimer + entities[i]->frameDelay && entities[i]->tag!="Player")
         {
             delete entities[i];
             entities.erase(entities.begin() + i);
