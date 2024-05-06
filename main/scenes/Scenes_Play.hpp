@@ -113,15 +113,6 @@ void Scene_Play::init()
         ui.push_back(temp);
     }
 
-     for (int i = 0; i < 3; i++)
-    {
-        Entity *temp = new Energy;
-        int intend = 10;
-        temp->sprite->move((temp->sprite->getGlobalBounds().getSize().x * temp->scale * i) - intend * i + 15, hearts[0]->sprite->getGlobalBounds().getSize().y-10);
-        energy.push_back(temp);
-        ui.push_back(temp);
-    }
-
     // ui.push_back(new Energy);
 
     par = new Entity;
@@ -282,16 +273,6 @@ void Scene_Play::update()
         }
     }
 
-    // energy 
-    if(playerProps.slowmoTime>0) {
-        for(int i=0;i<energy.size();i++) {
-            energy[i]->sprite->setColor(sf::Color(255, 255, 255,255));
-        }
-    } else {
-        for(int i=0;i<energy.size();i++) {
-            energy[i]->sprite->setColor(sf::Color(255, 255, 255, 55));
-        }
-    }
 
 
     // annoucementLogic

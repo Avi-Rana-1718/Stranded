@@ -28,7 +28,7 @@ Player::Player()
     playerProps.projectileHealth = 1;
     playerProps.projectileLifetime = 3;
     playerProps.projectileFirerate = 0.8;
-    playerProps.slowmoTime=5;
+    // playerProps.slowmoTime=5;
 
     frameDelay = 0.2;
     animationTimer = 0;
@@ -109,12 +109,12 @@ void Player::sInput()
         entities.push_back(projectile);
     }
 
-    if(playerProps.slowmoTime>0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-        gameSpeed=0.3;
-    }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
-        gameSpeed=1;
-    }
+    // if(playerProps.slowmoTime>0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+    //     gameSpeed=0.3;
+    // }
+    //     if(sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
+    //     gameSpeed=1;
+    // }
     // // dash
     // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     // {

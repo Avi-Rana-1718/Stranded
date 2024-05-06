@@ -155,7 +155,7 @@ GameEngine::GameEngine()
     }
     music.setVolume(50);
     music.setLoop(true);
-    // music.play();
+    music.play();
 }
 
 void GameEngine::run()

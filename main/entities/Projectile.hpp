@@ -45,12 +45,12 @@ Shell::Shell(float originX, float originY, float targetX, float targetY, int id,
 
     scale = 1;
 
-    colors.push_back(sf::Color(132,224,107));
-    colors.push_back(sf::Color(255,255,255));
-    colors.push_back(sf::Color(107,210,224));
-    colors.push_back(sf::Color(229,116,0));
+    // colors.push_back(sf::Color(132,224,107));
+    // colors.push_back(sf::Color(255,255,255));
+    // colors.push_back(sf::Color(107,210,224));
+    // colors.push_back(sf::Color(229,116,0));
 
-    sprite->setColor(colors[std::rand()%4]);
+    // sprite->setColor(colors[std::rand()%4]);
   
 
     sound.setBuffer(m_sounds["shot.wav"]);
