@@ -140,16 +140,19 @@ void Scene_Play::init()
     bgTitle->text->setFillColor(sf::Color::White);
     ui.push_back(bgTitle);
 
-    b1 = new Button("", "");
+    b1 = new Button("", "p_inc_dmg");
     b1->text->setPosition(WINDOW_W * 1 / 3 - 400, WINDOW_H / 2);
+    b1->text->setCharacterSize(40);
     ui.push_back(b1);
 
-    b2 = new Button("", "");
+    b2 = new Button("", "p_inc_ph");
     b2->text->setPosition(WINDOW_W * 2 / 3 - 400, WINDOW_H / 2);
+    b2->text->setCharacterSize(40);
     ui.push_back(b2);
 
-    b3 = new Button("", "");
+    b3 = new Button("", "p_inc_pf");
     b3->text->setPosition(WINDOW_W * 3 / 3 - 400, WINDOW_H / 2);
+    b3->text->setCharacterSize(40);
     ui.push_back(b3);
 
     // mouse & keyboard
@@ -453,16 +456,16 @@ void Scene_Play::sSelectBuff()
 
     if (b1->text->getString() == "")
     {
-        b1->text->setString("incPD");
+        b1->text->setString("Increase\ndamage");
     }
 
     if (b2->text->getString() == "")
     {
-        b2->text->setString("incPH");
+        b2->text->setString("Increase\npiercing");
     }
 
     if (b3->text->getString() == "")
     {
-        b3->text->setString("incPF");
+        b3->text->setString("Increase\nfirerate");
     }
 }
