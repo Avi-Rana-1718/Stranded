@@ -1,5 +1,6 @@
 # cpp-game-2d
 ![CPP](https://ziadoua.github.io/m3-Markdown-Badges/badges/C++/c++1.svg)
+![STARS](https://m3-markdown-badges.vercel.app/stars/7/3/Avi-Rana-1718/cpp-game-2d)
 
 A top-down, endless wave survival, shooter game made using C++ and [SFML](https://www.sfml-dev.org/index.php). NO game engine was used in making the game. The  game includes systems/features like
 - Asset management
