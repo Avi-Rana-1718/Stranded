@@ -15,8 +15,15 @@ A top-down, endless wave survival, shooter game made using C++ and [SFML](https:
 ![s2](image2.png)
 ![s3](image3.png)
 
-## Compile & run
-```
+## Compile
+Run the below command after you have cloned the repo and setup a C++ compiler and SFML!
+```cpp
 g++ .\main.cpp -I SFML\include\ -L SFML\lib\ -lsfml-main -lsfml-graphics -lsfml-system -lsfml-window -lsfml-audio
+```
+
+## Run
+```cpp
 ./a.exe
 ```
+
+
