@@ -1,8 +1,8 @@
-# cpp-game-2d
+# Stranded
 ![CPP](https://ziadoua.github.io/m3-Markdown-Badges/badges/C++/c++1.svg)
 ![STARS](https://m3-markdown-badges.vercel.app/stars/7/3/Avi-Rana-1718/cpp-game-2d)
 
-A top-down, endless wave survival, shooter game made using C++ and [SFML](https://www.sfml-dev.org/index.php). NO game engine was used in making the game. The  game includes systems/features like
+A top-down, endless wave survival, shooter game made using C++ and [SFML](https://www.sfml-dev.org/index.php). No game engine was used in making the game. The game includes systems/features like
 - Asset management
 - Collision detection
 - Sound effects/Music
@@ -16,13 +16,12 @@ A top-down, endless wave survival, shooter game made using C++ and [SFML](https:
 ![s3](image3.png)
 
 ## Compile
-Run the below command after you have cloned the repo and setup a C++ compiler and SFML!
+Compile the project using
 ```cpp
-g++ .\main.cpp -I SFML\include\ -L SFML\lib\ -lsfml-main -lsfml-graphics -lsfml-system -lsfml-window -lsfml-audio
+g++ .\main.cpp -I SFML\include\ -L SFML\lib\ -DSFML_STATIC -lsfml-main -lsfml-graphics-s -lsfml-window-s -lsfml-audio-s -lsfml-system-s -lopengl32 -lfreetype -lwinmm -lopenal32 -lflac -lvorbisenc -lvorbisfile -lvorbis -logg -lgdi32 -static-libstdc++ 
 ```
-
-## Run
-```cpp
+And run the executable using 
+```
 ./a.exe
 ```
 
