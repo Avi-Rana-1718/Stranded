@@ -8,7 +8,7 @@ A top-down, endless wave survival, shooter game made using C++ and [SFML](https:
 - Sound effects/Music
 - Scene management
 - Basic GUI
-- Animation
+- Animation 
 
 ## Screenshots
 ![s1](image1.png)
