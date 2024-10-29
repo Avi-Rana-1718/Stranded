@@ -10,6 +10,8 @@ A top-down, endless wave survival, shooter game made using C++ and [SFML](https:
 - Basic GUI
 - Animations
 
+Available on [itch.io](https://avirana.itch.io/stranded)
+
 ## Screenshots
 ![s1](image1.png)
 ![s2](image2.png)
